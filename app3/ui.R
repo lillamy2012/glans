@@ -8,44 +8,27 @@ shinyUI(fluidPage(
                 accept=c('text/csv', 
                          'text/comma-separated-values,text/plain', 
                          '.csv')),
-      #checkboxInput('header', 'Header', TRUE),
-      radioButtons('sep', 'Separator',
-                   c(Comma=',',
-                     Semicolon=';',
-                     Tab='\t'),
-                   ';'),
-      radioButtons('quote', 'Quote',
-                   c(None='',
-                     'Double Quote'='"',
-                     'Single Quote'="'"),
-                   '"'),
       tags$hr(),
-      sliderInput("filter", label = h4("Amanda score filter"), min = 100, 
-                  max = 1000, value = 200),
-      tags$hr(),
-        fileInput('file2', 'Choose CSV File for FASTA',
-                  accept=c('text/csv', 
-                           'text/comma-separated-values,text/plain', 
-                           '.csv'))
-        #checkboxInput('header', 'Header', TRUE),
-       # radioButtons('sep', 'Separator',
-        #             c(Comma=',',
-         #              Semicolon=';',
-        #               Tab='\t'),
-         #            ';'),
-        #radioButtons('quote', 'Quote',
-         #            c(None='',
-          #             'Double Quote'='"',
-           #            'Single Quote'="'"),
-            #         '"')
-       
+      fileInput('file2', 'Choose CSV File for FASTA',
+                accept=c('text/csv', 
+                         'text/comma-separated-values,text/plain', 
+                         '.csv')),
+  
+      numericInput("filter", label = h4("Min. Amanda score"), value = 100),
+      hr(),
+      checkboxInput("checkbox", label = "Use ONLY peptides UNIQUE mapped to protein", value = FALSE),
+      
+      tags$hr()
+        
     ),
   mainPanel(
       tabsetPanel(
-        tabPanel("Fasta List", DT::dataTableOutput("FastaList")),
-        tabPanel("Plot Data", plotOutput("my_prot"),dataTableOutput("info"),dataTableOutput("mod")),
-        tabPanel("Summary", dataTableOutput("summary"))
+       tabPanel("Fasta List", DT::dataTableOutput("FastaList")),
+        tabPanel("", plotOutput("my_prot"),dataTableOutput("info"),hr(),hr(),dataTableOutput("mod")),
+        tabPanel("Summary", dataTableOutput("summary")),
+        tabPanel("", plotOutput("my_prot1"),dataTableOutput("info1"),hr(),hr(),dataTableOutput("mod1"))
       )
   )
     )))
+
 
