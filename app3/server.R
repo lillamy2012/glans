@@ -2,7 +2,6 @@ library(shiny)
 library(dplyr)
 library(DT)
 source("functions.R")
-library(ggplot2)
 library(stringr)
 ###################################
 shinyServer(function(input, output) {
@@ -236,6 +235,5 @@ shinyServer(function(input, output) {
     res=(modSummary(mm[[1]]))
     colnames(res) = c("Position","Modification","# Modifications","Procentage of all peptides")
     return(res)
-  })
+  })})
    
-})

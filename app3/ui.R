@@ -4,12 +4,12 @@ shinyUI(fluidPage(
   titlePanel("Protein analysis app (PaApp)"),
   sidebarLayout(
     sidebarPanel(
-      fileInput('file1', 'Choose CSV File',
+      fileInput('file1', 'Choose CSV File with PSM details',
                 accept=c('text/csv', 
                          'text/comma-separated-values,text/plain', 
                          '.csv')),
       tags$hr(),
-      fileInput('file2', 'Choose CSV File for FASTA',
+      fileInput('file2', 'Choose CSV File with Coverage details',
                 accept=c('text/csv', 
                          'text/comma-separated-values,text/plain', 
                          '.csv')),
@@ -19,6 +19,7 @@ shinyUI(fluidPage(
       checkboxInput("checkbox", label = "Use ONLY peptides UNIQUE mapped to protein", value = FALSE),
       
       tags$hr()
+      
         
     ),
   mainPanel(

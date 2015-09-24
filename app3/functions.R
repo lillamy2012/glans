@@ -1,14 +1,24 @@
 library(shiny)
 library(dplyr)
 
+identifySumo = function(data){
+  regmatches(data,(gregexpr("(?<=\\()GG[A-Z]+",data, perl=T)))="sumo"
+  regmatches(data,(gregexpr("(?<=\\()[A-Z]+GG",data, perl=T)))="sumo"
+  data
+}
+
+
 colorList = list(
   "no mod." = "lightgrey",
-  "Ac" = "darkblue",         
-  "UBi" = "maroon",
-  "Trimethyl"= "pink",   
-  "Dimethyl"= "green",   
-  "Meth"= "yellow",       
-  "Ph"= "orange"   
+  "Ac" = "aquamarine",         
+  "UBi" = "red",
+  "Trimethyl" = "mistyrose",   
+  "Dimethyl" = "pink",   
+  "Meth" = "yellow",       
+  "Ph" = "chocolate",
+  "Cr" = "blue",
+  "Ci" = "green",
+  "Su" = "burlywood"
 )
 
 fasta_format = function(infile){
@@ -93,18 +103,15 @@ ProteinPlotMat <- function(fasta,indind){ ## fasta is the sequence of protein in
 }
 
 ProteinPlot <- function(totmat,by_character){
-  cols =c("darkblue","maroon","pink","yellow","orange","red","blue","green","mistyrose","lightblue","lightgrey")
+  cols =c("darkblue","darkred","pink","darkorchid","orange","red","blue","green","mistyrose","lightblue","lightgrey")
   cols2= c(unlist(colorList[colnames(totmat)]))
   extra2 = setdiff(colnames(totmat),names(colorList))
-  #print(length(extra2))
   if(length(extra2)>0){
     extra = setdiff(cols,cols2)
     colsTot = c(cols2,extra[1:length(extra2)])
     names(colsTot) = c(names(cols2),extra2)
   } else 
     colsTot=cols2
-  #print(colsTot)
-  #print(c(names(colsTot)))
   bp = barplot(t(totmat[,c(names(colsTot)[c(2:length(colsTot),1)])]),col=colsTot[c(2:length(colsTot),1)],border = NA,names.arg=rep("",nrow(totmat)))
   chars = rep("",nrow(totmat))
   isnot = which(rowSums(totmat[,2:ncol(totmat),drop=F])>0)
@@ -119,9 +126,6 @@ ProteinPlot <- function(totmat,by_character){
 }
 
 summaryFunction <- function(mm,indind,accession){
-  #print(nrow(indind))
-  #print((mm))
-  #print(accession)
   if(is.null(mm)){
     return(NULL)
   } else if(nrow(indind)==0){
@@ -166,15 +170,19 @@ tab=list(
   "Methyl"= "Meth",       
   "Phospho"= "Ph",    
   "PropMeth"="Meth",   
-  "Methylthio"=""
+  "Methylthio"="",
+  "Crotonylation"="Cr",
+  "Deamidated" = "Ci",
+  "sumo" = "Su"
 )
 
 convert <-function(indata,table=tab){
-for(i in 1:length(table)){
-  indata$Modifications=(gsub(names(table)[i],table[[i]],indata$Modifications))
-  regmatches(indata$Modifications,(gregexpr(";.*(?<=\\(\\))", indata$Modifications, perl=T))) =""
-  regmatches(indata$Modifications,(gregexpr(".*(?<=\\(\\))", indata$Modifications, perl=T))) =""
-}
+  indata$Modifications=identifySumo(indata$Modifications)
+  for(i in 1:length(table)){
+    indata$Modifications=(gsub(names(table)[i],table[[i]],indata$Modifications))
+    regmatches(indata$Modifications,(gregexpr(";.*(?<=\\(\\))", indata$Modifications, perl=T))) =""
+    regmatches(indata$Modifications,(gregexpr(".*(?<=\\(\\))", indata$Modifications, perl=T))) =""
+  }
   return(indata)
 }  
 
