@@ -4,6 +4,7 @@ library(DT)
 source("functions.R")
 library(stringr)
 ###################################
+out=NULL
 shinyServer(function(input, output) {
 
 ################################################################
@@ -15,7 +16,7 @@ shinyServer(function(input, output) {
     if (is.null(inFile))
       return(NULL)
     dd = read.csv(inFile$datapath, header=TRUE, sep=";", 
-                quote='"',skip=2,dec=",")
+                quote='"',skip=2,dec=",",stringsAsFactors=FALSE)
     dd = convert(dd)
     return(dd)
   })
@@ -25,8 +26,8 @@ shinyServer(function(input, output) {
     if (is.null(inFile))
       return(NULL)
     dd = read.csv(inFile$datapath, header=TRUE, sep=";", 
-                  quote="'",skip=2,dec=",",comment="")
-    extra = dd[1,]
+                  quote="'",skip=2,dec=",",comment="",stringsAsFactors=FALSE)
+    #extra = dd[1,]
     dd = dd[-1,]
     dd = dd[!is.na(dd[,1]),]
     return(dd)
@@ -82,7 +83,7 @@ shinyServer(function(input, output) {
     if (is.null(dd))
       return(NULL)
     dd = fasta_format(dd)
-    dd$Accession = paste0("<a href='#filtered_data'>", dd$Accession, "</a>")
+    #dd$Accession = paste0("<a href='#filtered_data'>", dd$Accession, "</a>")
     dd
   },options = list(lengthMenu = c(5, 30, 50), pageLength = 15),escape=FALSE,callback = JS(
     'table.on("click.dt", "tr", function() {
@@ -166,7 +167,16 @@ shinyServer(function(input, output) {
   ##################################################################    
   ## modification summary Fasta List (tab 1)
   ##################################################################  
+
   
+  mymod = reactive({
+    dd= readIn2()
+    indata = readIn1()
+    indata=filter_amanda(indata,input$filter)
+    dd= fasta_format(dd)
+    selected=input$FastaList_rows_selected
+    selected = selected[length(selected)]
+})
   output$mod = renderDataTable({
     dd= readIn2()
     indata=readIn1()
@@ -183,6 +193,8 @@ shinyServer(function(input, output) {
     mm = ProteinPlotMat(dd[as.numeric(selected),"Sequence"],indind)
     res=(modSummary(mm[[1]]))
     colnames(res) = c("Position","Modification","# Modifications","Procentage of all peptides")
+    out <<- res
+    outname <<- dd[(selected),"Accession"]
     return(res)
   })
  
@@ -229,11 +241,37 @@ shinyServer(function(input, output) {
     } else {
       index=grep(dd[(sel),"Accession"],indata$Accession,fixed=T)
     }
-   
     indind=indata[index,]
     mm = ProteinPlotMat(dd[as.numeric(sel),"Sequence"],indind)
     res=(modSummary(mm[[1]]))
     colnames(res) = c("Position","Modification","# Modifications","Procentage of all peptides")
+    out <<- res
+    outname <<- selected
     return(res)
-  })})
+  })
    
+##########################################
+datasetInput <- out
+    
+
+output$downloadData1 <- downloadHandler(
+  filename = function() { 
+    paste(paste(outname,paste(input$filter,input$checkbox,sep="_"),sep="_"),'.csv', sep='') 
+  },
+  content = function(file) {
+    write.csv(out, file)
+  }
+)
+
+output$downloadData <- downloadHandler(
+  filename = function() { 
+    paste(paste(outname,paste(input$filter,input$checkbox,sep="_"),sep="_"),'.csv', sep='') 
+  },
+  content = function(file) {
+    write.csv(out, file)
+  }
+)
+
+outputOptions(output,'downloadData', suspendWhenHidden=FALSE)
+
+})

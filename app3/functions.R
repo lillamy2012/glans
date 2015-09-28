@@ -30,7 +30,6 @@ fasta_format = function(infile){
       print("Something is wrong")
     else{
       seqtouse[i] = unlist(setdiff(unique(c(seqs[i,])),"No coverage."))
-  
     }
   } 
   results = data.frame(Accession=infile$Accession,Sequence=seqtouse)
