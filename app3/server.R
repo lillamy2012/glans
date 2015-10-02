@@ -1,3 +1,4 @@
+options(stringsAsFactors=FALSE)
 library(shiny)
 library(dplyr)
 library(DT)
@@ -28,6 +29,7 @@ shinyServer(function(input, output) {
     dd = read.csv(inFile$datapath, header=TRUE, sep=";", 
                   quote="'",skip=2,dec=",",comment="",stringsAsFactors=FALSE)
     #extra = dd[1,]
+    print(dd)
     dd = dd[-1,]
     dd = dd[!is.na(dd[,1]),]
     return(dd)
@@ -66,7 +68,6 @@ shinyServer(function(input, output) {
 })
     as.data.frame(res)
     rownames(res)=dd$Accession
-    #colnames(res) = names(summaryFunction(ProteinPlotMat(fasta,indind)[[1]],indind,dd[i,"Accession"]))
     colnames(res)=c("coverage","nr.peptides","modification_types","modifications_detected")
     res
   },options = list(lengthMenu = c(5, 30, 50), pageLength = 15),escape=FALSE,callback = JS(
@@ -192,7 +193,7 @@ shinyServer(function(input, output) {
     indind=indata[index,]
     mm = ProteinPlotMat(dd[as.numeric(selected),"Sequence"],indind)
     res=(modSummary(mm[[1]]))
-    colnames(res) = c("Position","Modification","# Modifications","Procentage of all peptides")
+    colnames(res) = c("Position","Modification","# Modifications","Percentage of all peptides")
     out <<- res
     outname <<- dd[(selected),"Accession"]
     return(res)
@@ -244,7 +245,7 @@ shinyServer(function(input, output) {
     indind=indata[index,]
     mm = ProteinPlotMat(dd[as.numeric(sel),"Sequence"],indind)
     res=(modSummary(mm[[1]]))
-    colnames(res) = c("Position","Modification","# Modifications","Procentage of all peptides")
+    colnames(res) = c("Position","Modification","# Modifications","Percentage of all peptides")
     out <<- res
     outname <<- selected
     return(res)
