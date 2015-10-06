@@ -6,6 +6,8 @@ source("functions.R")
 library(stringr)
 ###################################
 out=NULL
+
+data_sets <- c("mtcars", "morley", "rock")
 shinyServer(function(input, output) {
 
 ################################################################
@@ -29,7 +31,7 @@ shinyServer(function(input, output) {
     dd = read.csv(inFile$datapath, header=TRUE, sep=";", 
                   quote="'",skip=2,dec=",",comment="",stringsAsFactors=FALSE)
     #extra = dd[1,]
-    print(dd)
+    #print(dd)
     dd = dd[-1,]
     dd = dd[!is.na(dd[,1]),]
     return(dd)
@@ -275,4 +277,77 @@ output$downloadData <- downloadHandler(
 
 outputOptions(output,'downloadData', suspendWhenHidden=FALSE)
 
+output$choose_dataset <- renderUI({
+  selectInput("dataset", "Data set", as.list(data_sets))
 })
+
+# Check boxes
+output$choose_columns <- renderUI({
+  # If missing input, return to avoid error later in function
+  if(is.null(input$dataset))
+    return()
+  
+  # Get the data set with the appropriate name
+  dat <- get(input$dataset)
+  colnames <- names(dat)
+  
+  # Create the checkboxes and select them all by default
+  checkboxGroupInput("columns", "Choose columns", 
+                     choices  = colnames,
+                     selected = colnames)
+})
+
+
+# Output the data
+output$data_table <- renderTable({
+  # If missing input, return to avoid error later in function
+  if(is.null(input$dataset))
+    return()
+  
+  # Get the data set
+  dat <- get(input$dataset)
+  
+  # Make sure columns are correct for data set (when data set changes, the
+  # columns will initially be for the previous data set)
+  if (is.null(input$columns) || !(input$columns %in% names(dat)))
+    return()
+  
+  # Keep the selected columns
+  dat <- dat[, input$columns, drop = FALSE]
+  
+  # Return first 20 rows
+  head(dat, 20)
+})
+output$cityControls <- renderUI({
+  cities <-input$filter
+  checkboxGroupInput("cities", "Choose Cities", cities)
+})
+
+output$done <- reactive({
+  print("oo")
+  #if(is.null(input$infile2))
+   #  return(NULL)
+  #if(is.null(input$infile2) | is.null(input$infile1)){
+    #return(NULL)
+  #}
+  dd= readIn2()
+  oo <<-colnames(dd)
+  print(oo)
+  colnames(dd)
+  #checkboxGroupInput("done", "Choose Cities", oo)
+  #}
+})
+
+output$group <- reactive({
+  print("pp")
+  if(input$grouping==FALSE)
+    print("oo1")
+})
+   
+  
+#})
+
+outputOptions(output,'done', suspendWhenHidden=FALSE)
+outputOptions(output,'group', suspendWhenHidden=FALSE)
+})
+

@@ -18,11 +18,18 @@ shinyUI(fluidPage(
       hr(),
       checkboxInput("checkbox", label = "Use ONLY peptides UNIQUE mapped to protein", value = FALSE),
       
-      tags$hr()
+      conditionalPanel(
+        condition = "output.done",
+      checkboxInput("grouping", label = "Combine all samples", value = TRUE)),
       
-      
-        
-    ),
+      conditionalPanel(
+        condition = "output.group",
+        checkboxGroupInput("group1", "Group1",choices=oo,selected=NULL)),
+                   
+      conditionalPanel(
+        condition = "output.group",
+       checkboxGroupInput("group2", "Group2",choices=oo,selected=NULL))),
+    
   mainPanel(
       tabsetPanel(
        tabPanel("Fasta List", DT::dataTableOutput("FastaList")),
