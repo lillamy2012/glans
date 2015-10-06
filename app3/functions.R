@@ -185,3 +185,14 @@ convert <-function(indata,table=tab){
   return(indata)
 }  
 
+getSampleName <- function(infile){
+  nrSamples = (ncol(infile)-4)/2
+  ids = c("X$",paste0("X.",1:(nrSamples-1)))
+  #print(ids)
+  #print(colnames(infile))
+  ind = sapply(ids,grep,colnames(infile))-1
+  print(colnames(infile)[ind])
+}
+       
+  #seqs = infile[,c("X",paste0("X.",1:(nrSamples-1)))]
+  
