@@ -6,6 +6,10 @@ source("functions.R")
 library(stringr)
 ###################################
 out=NULL
+infile1=NULL
+infile1.1=NULL
+infile1.2=NULL
+infile2=NULL
 
 shinyServer(function(input, output) {
 ################################################################
@@ -19,6 +23,7 @@ shinyServer(function(input, output) {
     dd = read.csv(inFile$datapath, header=TRUE, sep=";", 
                 quote='"',skip=2,dec=",",stringsAsFactors=FALSE)
     dd = convert(dd)
+    infile1 <<- dd
     return(dd)
   })
   
@@ -30,54 +35,18 @@ shinyServer(function(input, output) {
                   quote="'",skip=2,dec=",",comment="",stringsAsFactors=FALSE)
     dd = dd[-1,]
     dd = dd[!is.na(dd[,1]),]
+    infile2 <<- dd
     return(dd)
   })
-
-##################################################################    
-## summarize peptides, modifications etc per protein (tab 'Summary')
-##################################################################  
   
-  output$summary =  DT::renderDataTable({
-    dd= readIn2()
-    indata=readIn1()
-    if(is.null(indata)|is.null(dd))
-      return(NULL)
-    indata=filter_amanda(indata,input$filter)
-    dd= fasta_format(dd)
-    res = matrix(NA,nrow=nrow(dd),ncol=4)
-    withProgress(message = 'Calculating', value = 0, {
-      for (i in 1:nrow(dd)){
-      fasta=dd$Sequence[i]
-      if(input$checkbox==TRUE){
-        selected=sub("\\|","\\\\|",dd[i,"Accession"])
-        grepWord=paste("^","$",sep=selected)
-        index = grep(grepWord,indata$Accession,fixed=F,value=F)
-      } else {
-        index=grep(dd[i,"Accession"],indata$Accession,fixed=T)
-      }
-      indind=indata[index,]
-      if(length(index)>0)
-        res[i,]=unlist(summaryFunction(ProteinPlotMat(fasta,indind)[[1]],indind,dd[i,"Accession"]))
-      # Increment the progress bar, and update the detail text.
-      incProgress(1/nrow(dd), detail = paste("Protein", dd[i,"Accession"]))
-      # Pause for 0.1 seconds to simulate a long computation.
-      Sys.sleep(0.1)
-      }
-})
-    as.data.frame(res)
-    rownames(res)=dd$Accession
-    colnames(res)=c("coverage","nr.peptides","modification_types","modifications_detected")
-    res
-  },options = list(lengthMenu = c(5, 30, 50), pageLength = 15),escape=FALSE,callback = JS(
-    'table.on("click.dt", "tr", function() {
-    tabs = $(".tabbable .nav.nav-tabs li a");
-    $(tabs[3]).click();})'))
-
+  
   ##################################################################    
-  ## summarize proteins in study (tab 'Fasta List')
+  ## summarize proteins in study (tab 'Fasta List'). This is the first thing that happens, infile1 and infile2 are created
   ##################################################################  
   
   output$FastaList = DT::renderDataTable({
+    if (is.null(infile1))
+      infile1= readIn1()
     dd= readIn2()
     if (is.null(dd))
       return(NULL)
@@ -88,6 +57,86 @@ shinyServer(function(input, output) {
     'table.on("click.dt", "tr", function() {
     tabs = $(".tabbable .nav.nav-tabs li a");
     $(tabs[1]).click();})'))
+  
+
+##################################################################    
+## summarize peptides, modifications etc per protein (tab 'Summary')
+##################################################################  
+  
+  output$summary =  DT::renderDataTable({
+    dd = infile2
+    grp=0
+    indata=infile1
+    res = matrix(NA,nrow=nrow(dd),ncol=4)
+    dd= fasta_format(dd)
+     if(is.null(indata)|is.null(dd))
+      return(NULL)
+    indata=filter_amanda(indata,input$filter)
+    if(!is.null(input$group1) & !is.null(input$group2)){
+      groups=splitToGroups(indata,input$group1,input$group2)
+      infile1.1 = groups[[1]]
+      infile1.2 = groups[[2]]
+      grp=1
+      res1 = matrix(NA,nrow=nrow(dd),ncol=4)
+      res2 = res1
+      res = list(res1,res2)
+    }
+    withProgress(message = 'Calculating', value = 0, {
+      for (i in 1:nrow(dd)){
+        fasta=dd$Sequence[i]
+        if(input$checkbox==TRUE){
+          selected=sub("\\|","\\\\|",dd[i,"Accession"])
+          grepWord=paste("^","$",sep=selected)
+          if(grp==1){
+            index1 = grep(grepWord,infile1.1$Accession,fixed=F,value=F)
+            index2 = grep(grepWord,infile1.2$Accession,fixed=F,value=F)
+            indind1 = infile1.1[index1,]
+            indind2 = infile1.2[index2,]
+          } else {
+            index1 = grep(grepWord,indata$Accession,fixed=F,value=F)
+            indind1=indata[index1,]
+          }
+        } else {
+          if(grp==1){
+            index1 = grep(dd[i,"Accession"],infile1.1$Accession,fixed=F,value=F)
+            index2 = grep(dd[i,"Accession"],infile1.2$Accession,fixed=F,value=F)
+            indind1 = infile1.1[index1,]
+            indind2 = infile1.2[index2,]
+            
+          } else {
+            index1=grep(dd[i,"Accession"],indata$Accession,fixed=T)
+            indind1=indata[index1,]
+          }}
+        
+       
+        if(length(index1)>0){
+          if(class(res)=="list"){
+            res[[1]][i,]=unlist(summaryFunction(ProteinPlotMat(fasta,indind1)[[1]],indind1,dd[i,"Accession"]))
+            res[[2]][i,]=unlist(summaryFunction(ProteinPlotMat(fasta,indind2)[[1]],indind2,dd[i,"Accession"]))
+          } else
+          res[i,]=unlist(summaryFunction(ProteinPlotMat(fasta,indind1)[[1]],indind1,dd[i,"Accession"]))
+        }
+      # Increment the progress bar, and update the detail text.
+        incProgress(1/nrow(dd), detail = paste("Protein", dd[i,"Accession"]))
+      # Pause for 0.1 seconds to simulate a long computation.
+        Sys.sleep(0.1)
+      }
+    })
+    if(class(res)=="list")
+      res = cbind(res[[1]],res[[2]]) 
+    res = as.data.frame(res)
+    rownames(res)=dd$Accession
+    if (grp==1)
+      colnames(res)=c("coverage_gr1","nr.peptides_gr1","modification_types_gr1","modifications_detected_gr1",
+                    "coverage_gr2","nr.peptides_gr2","modification_types_gr2","modifications_detected_gr2")
+    if (grp==0)
+    colnames(res)=c("coverage","nr.peptides","modification_types","modifications_detected")
+    res
+  },options = list(lengthMenu = c(5, 30, 50), pageLength = 15),escape=FALSE,callback = JS(
+    'table.on("click.dt", "tr", function() {
+    tabs = $(".tabbable .nav.nav-tabs li a");
+    $(tabs[3]).click();})'))
+
   
   ##################################################################    
   ## plot protein from Fasta List (tab 1)
@@ -286,10 +335,13 @@ output$group <- reactive({
 })
   
 output$test <- renderDataTable({
-  indata=readIn1()
+  indata=infile1
   indata=filter_amanda(indata,input$filter)
-  ab = head(splitToGroups(indata,input$group1,input$group2)[[1]] )
-  })
+  groups = splitToGroups(indata,input$group1,input$group2)
+  infile1.1 <<- groups[[1]]
+  infile1.2 <<- groups[[2]]
+  infile1.1
+    })
 
 outputOptions(output,'done', suspendWhenHidden=FALSE)
 outputOptions(output,'group', suspendWhenHidden=FALSE)

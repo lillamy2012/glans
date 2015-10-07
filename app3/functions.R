@@ -1,6 +1,10 @@
 library(shiny)
 library(dplyr)
 
+##########################################
+## functions for renaming and labeling 
+##########################################
+
 identifySumo = function(data){
   regmatches(data,(gregexpr("(?<=\\()GG[A-Z]+",data, perl=T)))="sumo"
   regmatches(data,(gregexpr("(?<=\\()[A-Z]+GG",data, perl=T)))="sumo"
@@ -20,6 +24,38 @@ colorList = list(
   "Su" = "burlywood"
 )
 
+convert <-function(indata,table=tab){
+  indata$Modifications=identifySumo(indata$Modifications)
+  for(i in 1:length(table)){
+    indata$Modifications=(gsub(names(table)[i],table[[i]],indata$Modifications))
+    regmatches(indata$Modifications,(gregexpr(";.*(?<=\\(\\))", indata$Modifications, perl=T))) =""
+    regmatches(indata$Modifications,(gregexpr(".*(?<=\\(\\))", indata$Modifications, perl=T))) =""
+  }
+  return(indata)
+}  
+
+tab=list(
+  "Oxidation"="",
+  "Acetyl"="Ac",        
+  "Propionyl"="",     
+  "Gln->pyro-Glu"="",
+  "Ubi_LRGG"="UBi",     
+  "GlyGly"="UBi",      
+  #"Trimethyl"="3meth",   
+  #"Dimethyl"="2meth",    
+  "Methyl"= "Meth",       
+  "Phospho"= "Ph",    
+  "PropMeth"="Meth",   
+  "Methylthio"="",
+  "Crotonylation"="Cr",
+  "Deamidated" = "Ci",
+  "sumo" = "Su"
+)
+
+######################################################
+## rearrange data frame formats
+######################################################
+
 fasta_format = function(infile){
   nrSamples = (ncol(infile)-4)/2
   seqs = infile[,c("X",paste0("X.",1:(nrSamples-1)))]
@@ -34,6 +70,9 @@ fasta_format = function(infile){
   results = data.frame(Accession=infile$Accession,Sequence=seqtouse)
   }
 
+#######################################################
+## filter data, and check if map as assigned
+#######################################################
 
 filter_amanda=function(data,filt){
   data = filter(data,Amanda.Score>filt[1])
@@ -53,28 +92,32 @@ checkIfMap <- function(fasta,Sequences){
   return(wrong)
 }
 
-ProteinPlotMat <- function(fasta,indind){ ## fasta is the sequence of protein in question, indind is the data table matching 
-  by_character = strsplit(fasta,"")[[1]]
-  covmat = matrix(0,length(by_character))
-  Sequences = indind$Sequence
-  wrongMap = checkIfMap(fasta,Sequences)
+#########################################################
+## make a matrix with coverage per position (one protein)
+#########################################################
+
+ProteinPlotMat <- function(fasta,indind){ ### fasta is the sequence of protein in question, indind is the data table matching 
+  by_character = strsplit(fasta,"")[[1]] ### one column per character
+  covmat = matrix(0,length(by_character)) ### matrix with 0 to start
+  Sequences = indind$Sequence ### sequences reported to map protein
+  wrongMap = checkIfMap(fasta,Sequences) ### check if correctly mapped
   if (length(wrongMap)==nrow(indind)){
     return(NULL)
   } else if(length(wrongMap)>0 ){
     indind=indind[-wrongMap,]
     Sequences = indind$Sequence
   } 
-  Modifications = indind$Modifications
-  Modifications=sub("N-Term",1,Modifications)
-  match_ind=(str_locate_all(pattern = Sequences, fasta))
-  modtype=regmatches(Modifications, gregexpr("(?<=\\().*?(?=\\))", Modifications, perl=T))
-  for (i in 1:length(match_ind)){
-    ii=match_ind[[i]]
+  Modifications = indind$Modifications ### modifications reported 
+  Modifications=sub("N-Term",1,Modifications)  ### rename
+  match_ind=(str_locate_all(pattern = Sequences, fasta)) ### start and end for each sequence to fasta file (list one item per sequence)
+  for (i in 1:length(match_ind)){ ## for each sequence mapped to protein
+    ii=match_ind[[i]] ## start and end in fasta
     if(!is.na(ii[1]))
-      covmat[ii[1]:ii[2]]=covmat[ii[1]:ii[2]]+1
+      covmat[ii[1]:ii[2]]=covmat[ii[1]:ii[2]]+1 ## add one where cover
   }
-  position <- strsplit(Modifications, "[^[:digit:]]")
-  v=list()
+  modtype=regmatches(Modifications, gregexpr("(?<=\\().*?(?=\\))", Modifications, perl=T))  ### type of modificantions per sequence (list)
+  position <- strsplit(Modifications, "[^[:digit:]]") # position in peptid of modification (list matching modtype)
+  v=list() ## list with new position (relative fasta file)
   for(i in 1:length(position)){
     v[[i]]=as.numeric(unlist(position[i]))+unlist(match_ind[i])[1]-1 # 
   }
@@ -123,6 +166,10 @@ ProteinPlot <- function(totmat,by_character){
   return(totmat)
 }
 
+#####################################################################
+## summarize
+#####################################################################
+
 summaryFunction <- function(mm,indind,accession){
   if(is.null(mm)){
     return(NULL)
@@ -149,40 +196,12 @@ modSummary <- function(mm){
       if(mm[i,j]>0){
         k = k+1
         res[[k]] =(c(rownames(mm)[i],colnames(mm)[j],mm[i,j],round((mm[i,j]/tot[i])*100,1)))
+        }
+      }
     }
-    }
-  }
   re = do.call("rbind",res)
   return(re)
   }
-
-tab=list(
-  "Oxidation"="",
-  "Acetyl"="Ac",        
-  "Propionyl"="",     
-  "Gln->pyro-Glu"="",
-  "Ubi_LRGG"="UBi",     
-  "GlyGly"="UBi",      
-  #"Trimethyl"="3meth",   
-  #"Dimethyl"="2meth",    
-  "Methyl"= "Meth",       
-  "Phospho"= "Ph",    
-  "PropMeth"="Meth",   
-  "Methylthio"="",
-  "Crotonylation"="Cr",
-  "Deamidated" = "Ci",
-  "sumo" = "Su"
-)
-
-convert <-function(indata,table=tab){
-  indata$Modifications=identifySumo(indata$Modifications)
-  for(i in 1:length(table)){
-    indata$Modifications=(gsub(names(table)[i],table[[i]],indata$Modifications))
-    regmatches(indata$Modifications,(gregexpr(";.*(?<=\\(\\))", indata$Modifications, perl=T))) =""
-    regmatches(indata$Modifications,(gregexpr(".*(?<=\\(\\))", indata$Modifications, perl=T))) =""
-  }
-  return(indata)
-}  
 
 getSampleName <- function(infile){
   nrSamples = (ncol(infile)-4)/2
@@ -192,8 +211,10 @@ getSampleName <- function(infile){
 }
        
 splitToGroups <- function(infile,group1,group2){
+  #print("so far")
+  #print(group1)
   gr1 = infile[which(infile[,group1]=="X"),]
-  print(head(gr1))
+  #print(head(gr1))
   gr2 = infile[which(infile[,group2]=="X"),]
   res = list(gr1,gr2)
   return(res)
