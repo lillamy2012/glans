@@ -284,7 +284,13 @@ output$group <- reactive({
   if(input$grouping==FALSE)
     yes=TRUE
 })
-   
+  
+output$test <- renderDataTable({
+  indata=readIn1()
+  indata=filter_amanda(indata,input$filter)
+  ab = head(splitToGroups(indata,input$group1,input$group2)[[1]] )
+  })
+
 outputOptions(output,'done', suspendWhenHidden=FALSE)
 outputOptions(output,'group', suspendWhenHidden=FALSE)
 })
