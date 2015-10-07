@@ -7,8 +7,8 @@ library(stringr)
 ###################################
 out=NULL
 infile1=NULL
-infile1.1=NULL
-infile1.2=NULL
+#infile1.1=NULL
+#infile1.2=NULL
 infile2=NULL
 
 shinyServer(function(input, output) {
@@ -75,6 +75,8 @@ shinyServer(function(input, output) {
     if(!is.null(input$group1) & !is.null(input$group2)){
       groups=splitToGroups(indata,input$group1,input$group2)
       infile1.1 = groups[[1]]
+      #print(head(infile1.1))
+      #print(tail(infile1.1))
       infile1.2 = groups[[2]]
       grp=1
       res1 = matrix(NA,nrow=nrow(dd),ncol=4)
@@ -334,15 +336,6 @@ output$group <- reactive({
     yes=TRUE
 })
   
-output$test <- renderDataTable({
-  indata=infile1
-  indata=filter_amanda(indata,input$filter)
-  groups = splitToGroups(indata,input$group1,input$group2)
-  infile1.1 <<- groups[[1]]
-  infile1.2 <<- groups[[2]]
-  infile1.1
-    })
-
 outputOptions(output,'done', suspendWhenHidden=FALSE)
 outputOptions(output,'group', suspendWhenHidden=FALSE)
 })

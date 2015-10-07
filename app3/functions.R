@@ -211,11 +211,13 @@ getSampleName <- function(infile){
 }
        
 splitToGroups <- function(infile,group1,group2){
-  #print("so far")
   #print(group1)
-  gr1 = infile[which(infile[,group1]=="X"),]
-  #print(head(gr1))
-  gr2 = infile[which(infile[,group2]=="X"),]
+  ii = infile[,group1]
+  g1 = unlist(apply(ii,2,function(x) grep("X",x)))
+  ii = infile[,group2]
+  g2 = unlist(apply(ii,2,function(x) grep("X",x)))
+  gr1 = infile[g1,]
+  gr2 = infile[g2,]
   res = list(gr1,gr2)
   return(res)
 }
