@@ -75,8 +75,6 @@ shinyServer(function(input, output) {
     if(!is.null(input$group1) & !is.null(input$group2)){
       groups=splitToGroups(indata,input$group1,input$group2)
       infile1.1 = groups[[1]]
-      #print(head(infile1.1))
-      #print(tail(infile1.1))
       infile1.2 = groups[[2]]
       grp=1
       res1 = matrix(NA,nrow=nrow(dd),ncol=4)
@@ -110,14 +108,21 @@ shinyServer(function(input, output) {
             indind1=indata[index1,]
           }}
         
-       
-        if(length(index1)>0){
-          if(class(res)=="list"){
+        if(class(res)=="list"){
+          if(length(index1)>0){  
             res[[1]][i,]=unlist(summaryFunction(ProteinPlotMat(fasta,indind1)[[1]],indind1,dd[i,"Accession"]))
+          } else 
+            res[[1]][i,]=rep(0,ncol(res[[1]]))
+          if(length(index2)>0){  
             res[[2]][i,]=unlist(summaryFunction(ProteinPlotMat(fasta,indind2)[[1]],indind2,dd[i,"Accession"]))
-          } else
-          res[i,]=unlist(summaryFunction(ProteinPlotMat(fasta,indind1)[[1]],indind1,dd[i,"Accession"]))
-        }
+          } else 
+            res[[2]][i,]=rep(0,ncol(res[[2]]))
+         } else
+          if(length(index1)>0){  
+            res[i,]=unlist(summaryFunction(ProteinPlotMat(fasta,indind1)[[1]],indind1,dd[i,"Accession"]))
+          } else {
+            res[i,]=rep(0,ncol(res))
+          }
       # Increment the progress bar, and update the detail text.
         incProgress(1/nrow(dd), detail = paste("Protein", dd[i,"Accession"]))
       # Pause for 0.1 seconds to simulate a long computation.
