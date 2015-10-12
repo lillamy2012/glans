@@ -58,6 +58,8 @@ tab=list(
 
 fasta_format = function(infile){
   nrSamples = (ncol(infile)-4)/2
+  if(nrSamples<1)
+    return(NULL)
   seqs = infile[,c("X",paste0("X.",1:(nrSamples-1)))]
   seqtouse=matrix(NA,nrow(seqs))
   for (i in 1:nrow(seqs)){
@@ -204,6 +206,8 @@ modSummary <- function(mm){
   }
 
 getSampleName <- function(infile){
+  if(is.null(infile))
+    return(NULL)
   nrSamples = (ncol(infile)-4)/2
   ids = c("X$",paste0("X.",1:(nrSamples-1)))
   ind = sapply(ids,grep,colnames(infile))-1

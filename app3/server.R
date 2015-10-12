@@ -10,7 +10,6 @@ infile1=NULL
 #infile1.1=NULL
 #infile1.2=NULL
 infile2=NULL
-
 shinyServer(function(input, output) {
 ################################################################
 ### read in files functions 1 = psm details, 2 = coverage details  
@@ -139,7 +138,7 @@ shinyServer(function(input, output) {
     if (grp==0)
     colnames(res)=c("coverage","nr.peptides","modification_types","modifications_detected")
     res
-  },options = list(lengthMenu = c(5, 30, 50), pageLength = 15),escape=FALSE,callback = JS(
+  },options = list(lengthMenu = c(15, 30, 50), pageLength = 15),escape=FALSE,callback = JS(
     'table.on("click.dt", "tr", function() {
     tabs = $(".tabbable .nav.nav-tabs li a");
     $(tabs[3]).click();})'))
@@ -337,11 +336,41 @@ output$done <- reactive({
 })
 
 output$group <- reactive({
-  if(input$grouping==FALSE)
+  if(input$grouping==FALSE){
+    dd= readIn2()
+    samp = getSampleName(dd)
+    oo <<-samp
     yes=TRUE
-})
+  }
+  else{
+    yes=FALSE
+  oo=NULL
+  }
+    })
   
 outputOptions(output,'done', suspendWhenHidden=FALSE)
 outputOptions(output,'group', suspendWhenHidden=FALSE)
+
+output$oo <-renderText({
+  dd= readIn2()
+  samp = getSampleName(dd)
+  oo=samp
 })
 
+output$group1 <- renderUI({
+  dd= readIn2()
+  samp = getSampleName(dd)
+  checkboxGroupInput("group1", "Group1", 
+                     choices  = samp,
+                     selected = NULL)
+})
+output$group2 <- renderUI({
+  dd= readIn2()
+  samp = getSampleName(dd)
+  checkboxGroupInput("group2", "Group2", 
+                     choices  = samp,
+                     selected = NULL)
+})
+})
+
+#checkboxGroupInput("group1", "Group1",choices=oo,selected=NULL)),
