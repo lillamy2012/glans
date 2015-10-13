@@ -106,6 +106,7 @@ ProteinPlotMat <- function(fasta,indind){ ### fasta is the sequence of protein i
   if (length(wrongMap)==nrow(indind)){
     return(NULL)
   } else if(length(wrongMap)>0 ){
+    print("WARNING")
     indind=indind[-wrongMap,]
     Sequences = indind$Sequence
   } 
@@ -127,7 +128,7 @@ ProteinPlotMat <- function(fasta,indind){ ### fasta is the sequence of protein i
   tot = list()
   for(i in 1:length(v)){
     tot[[i]]= data.frame(modtype[[i]],protein_pos[[i]])
-  }
+      }
   totdf = do.call("rbind",tot)
   if(nrow(totdf)>0){
     stat_nr = as.matrix(table(totdf))

@@ -175,26 +175,66 @@ shinyServer(function(input, output) {
   
   output$my_prot1 =renderPlot({
     dd= readIn2()
+    grp=0
     indata=readIn1()
     indata=filter_amanda(indata,input$filter)
     dd= fasta_format(dd)
+    if(!is.null(input$group1) & !is.null(input$group2)){
+      groups=splitToGroups(indata,input$group1,input$group2)
+      infile1.1 = groups[[1]]
+      infile1.2 = groups[[2]]
+      grp=1
+      res = list(infile1.1,infile1.2)
+    } else 
+      res = indata
     selected=input$summary_rows_selected
     selected = selected[length(selected)]
     selected=sub("\\|","\\\\|",selected)
     sel=(grep(selected,dd[,"Accession"]))
     if(input$checkbox==TRUE){
-      index = use_unique(dd,sel,indata)
-    } else {
-      index=grep(dd[(sel),"Accession"],indata$Accession,fixed=T)
+      if(grp==1){
+        index1 = use_unique(dd,sel,res[[1]])
+        index2 = use_unique(dd,sel,res[[2]])
+        indind1=indata[index1,]
+        indind2=indata[index2,]
+      }else  {
+        index = use_unique(dd,sel,res)
+        indind=indata[index,]
+      }
     }
-    indind=indata[index,]
-    if(nrow(indind)>0){
-      mm = ProteinPlotMat(dd[as.numeric(sel),"Sequence"],indind)
-      ProteinPlot(mm[[1]],mm[[2]])
+    if(input$checkbox==FALSE)
+      if(grp==1){
+        index1=grep(dd[(sel),"Accession"],res[[1]]$Accession,fixed=T)
+        index2=grep(dd[(sel),"Accession"],res[[2]]$Accession,fixed=T)
+        indind1=res[[1]][index1,]
+        indind2=res[[2]][index2,]
+    } else {
+      index=grep(dd[(sel),"Accession"],res$Accession,fixed=T)
+      indind=indata[index,]
+    }
+   if(grp==1){
+     if(nrow(indind1)>0){
+      mm1 = ProteinPlotMat(dd[as.numeric(sel),"Sequence"],indind1)
+     }
+     if(nrow(indind2)>0){
+       mm2 = ProteinPlotMat(dd[as.numeric(sel),"Sequence"],indind2)
+     } 
+     par(mfrow=c(2,1))
+     ProteinPlot(mm1[[1]],mm1[[2]])
+     ProteinPlot(mm2[[1]],mm2[[2]])
+     
+   } else {
+      if(nrow(indind)>0){
+        mm = ProteinPlotMat(dd[as.numeric(sel),"Sequence"],indind)
+        
+     
+      
+        ProteinPlot(mm[[1]],mm[[2]])
+
     }
     else
       plot(1:100,pch=NULL)
-  })
+  }})
     
   ##################################################################    
   ## info summary from Fasta List (tab 1)
@@ -372,5 +412,3 @@ output$group2 <- renderUI({
                      selected = NULL)
 })
 })
-
-#checkboxGroupInput("group1", "Group1",choices=oo,selected=NULL)),
