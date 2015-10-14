@@ -226,4 +226,7 @@ splitToGroups <- function(infile,group1,group2){
   return(res)
 }
  
+#modSummary2stats <- function(df){
+  
+}
   

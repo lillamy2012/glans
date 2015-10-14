@@ -226,11 +226,7 @@ shinyServer(function(input, output) {
    } else {
       if(nrow(indind)>0){
         mm = ProteinPlotMat(dd[as.numeric(sel),"Sequence"],indind)
-        
-     
-      
         ProteinPlot(mm[[1]],mm[[2]])
-
     }
     else
       plot(1:100,pch=NULL)
