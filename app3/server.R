@@ -369,6 +369,9 @@ output$done <- reactive({
   samp = getSampleName(dd)
   oo <<-samp
   colnames(dd)
+  #print(dd)
+  indata=filter_amanda(infile1,input$filter)
+  #ProtPerSample(indata,dd)
 })
 
 output$group <- reactive({
@@ -406,5 +409,18 @@ output$group2 <- renderUI({
   checkboxGroupInput("group2", "Group2", 
                      choices  = samp,
                      selected = NULL)
+})
+
+
+output$plotGroups <- renderPlot({
+  gr1 = input$group1
+  print(head(gr1))
+  gr2 = input$group2
+  indata=filter_amanda(infile1,input$filter)
+  data= ProtPerSample(indata,infile2)
+  newdata=data/colSums(data)
+  plot(rowSums(newdata[,gr1,drop=F]),rowSums(newdata[,gr2,drop=F]),ylab="group2",xlab="group1")
+  abline(0,1,col="red",lwd=3)
+  
 })
 })

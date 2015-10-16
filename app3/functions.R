@@ -226,7 +226,21 @@ splitToGroups <- function(infile,group1,group2){
   return(res)
 }
  
-#modSummary2stats <- function(df){
-  
+ProtPerSample <- function(infile1,infile2){
+  samp = getSampleName(infile2)
+  ll = list()
+  for (i in 1:length(samp)){
+    ll[[i]] = infile1[which(infile1[,samp[i]]=="X"),]
+  }
+  nr=matrix(NA,nrow=length(infile2$Accession),ncol=length(samp))
+  colnames(nr)=samp
+  rownames(nr)=infile2$Accession
+  for (j in 1:length(infile2$Accession)){
+    #print(infile2$Accession[j])
+    for (i in 1:length(ll)){
+      nr[j,i]=length(grep(infile2$Accession[j],ll[[i]]$Accession))
+    }
+  }
+  print(colSums(nr))
+  return(nr)
 }
-  
