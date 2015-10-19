@@ -1,5 +1,6 @@
 options(stringsAsFactors=FALSE)
 library(shiny)
+library("Hmisc")
 library(dplyr)
 library(DT)
 source("functions.R")
@@ -369,7 +370,6 @@ output$done <- reactive({
   samp = getSampleName(dd)
   oo <<-samp
   colnames(dd)
-  #print(dd)
   indata=filter_amanda(infile1,input$filter)
   #ProtPerSample(indata,dd)
 })
@@ -414,12 +414,19 @@ output$group2 <- renderUI({
 
 output$plotGroups <- renderPlot({
   gr1 = input$group1
-  print(head(gr1))
   gr2 = input$group2
   indata=filter_amanda(infile1,input$filter)
   data= ProtPerSample(indata,infile2)
   newdata=data/colSums(data)
-  plot(rowSums(newdata[,gr1,drop=F]),rowSums(newdata[,gr2,drop=F]),ylab="group2",xlab="group1")
+  pp1 = getConfInt(data[,gr1,drop=F])
+  pp2 = getConfInt(data[,gr2,drop=F])
+  plot(x=pp1[1,],y=pp2[1,],asp=1,pch=19)
+  segments(pp1[2,],pp2[1,],pp1[3,],pp2[1,])
+  segments(pp1[1,],pp2[2,],pp1[1,],pp2[3,])
+  #points(x=pp1[2,],pch=".",y=pp2[1,])#,pch=".")
+  #points(x=pp1[3,],pch=".",y=pp2[1,])
+  #points(pp1[3,],pp2[1,],pch=".")
+  #plot(rowSums(newdata[,gr1,drop=F]),rowSums(newdata[,gr2,drop=F]),ylab="group2",xlab="group1")
   abline(0,1,col="red",lwd=3)
   
 })

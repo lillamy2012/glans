@@ -1,6 +1,6 @@
 library(shiny)
 library(dplyr)
-
+library("Hmisc")
 ##########################################
 ## functions for renaming and labeling 
 ##########################################
@@ -241,6 +241,12 @@ ProtPerSample <- function(infile1,infile2){
       nr[j,i]=length(grep(infile2$Accession[j],ll[[i]]$Accession))
     }
   }
-  print(colSums(nr))
   return(nr)
+}
+getConfInt <-function(data){
+  sums = colSums(data)
+  new = rowSums(data)
+  tot = sum(sums)
+  confs =  sapply(new,function(x) binconf(x,tot))
+  return(confs)
 }
