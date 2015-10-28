@@ -385,10 +385,13 @@ outputOptions(output,'downloadData', suspendWhenHidden=FALSE)
 
 output$done <- reactive({
   dd= readIn2()
+  if(is.null(dd))
+    return(NULL)
   samp = getSampleName(dd)
   oo <<-samp
   colnames(dd)
   indata=filter_amanda(infile1,input$filter)
+  print("pp")
   #ProtPerSample(indata,dd)
 })
 
