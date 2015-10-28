@@ -8,9 +8,8 @@ library(stringr)
 ###################################
 out=NULL
 infile1=NULL
-#infile1.1=NULL
-#infile1.2=NULL
 infile2=NULL
+toclick=NULL
 shinyServer(function(input, output) {
 ################################################################
 ### read in files functions 1 = psm details, 2 = coverage details  
@@ -39,6 +38,11 @@ shinyServer(function(input, output) {
     return(dd)
   })
   
+  #perSample <- reactive({
+  #  ProtPerSample(indata,infile2)
+    
+#  })
+  
   
   ##################################################################    
   ## summarize proteins in study (tab 'Fasta List'). This is the first thing that happens, infile1 and infile2 are created
@@ -51,7 +55,6 @@ shinyServer(function(input, output) {
     if (is.null(dd))
       return(NULL)
     dd = fasta_format(dd)
-    #dd$Accession = paste0("<a href='#filtered_data'>", dd$Accession, "</a>")
     dd
   },options = list(lengthMenu = c(5, 30, 50), pageLength = 15),escape=FALSE,callback = JS(
     'table.on("click.dt", "tr", function() {
@@ -64,80 +67,75 @@ shinyServer(function(input, output) {
 ##################################################################  
   
   output$summary =  DT::renderDataTable({
+    indata=infile1 
     dd = infile2
-    grp=0
-    indata=infile1
-    res = matrix(NA,nrow=nrow(dd),ncol=4)
     dd= fasta_format(dd)
-     if(is.null(indata)|is.null(dd))
+    if(is.null(indata)|is.null(dd))
       return(NULL)
-    indata=filter_amanda(indata,input$filter)
-    if(!is.null(input$group1) & !is.null(input$group2)){
+    indata=filter_amanda(indata,input$filter) ## amanda score
+    if(input$checkbox==TRUE) ## unique only
+      indata = indata[-grep(";",indata$Accession),]
+    data= ProtPerSample(indata,infile2)
+    if(!is.null(input$group1) & !is.null(input$group2)){ ## pairwise
       groups=splitToGroups(indata,input$group1,input$group2)
       infile1.1 = groups[[1]]
       infile1.2 = groups[[2]]
       grp=1
-      res1 = matrix(NA,nrow=nrow(dd),ncol=4)
+      tot1 = sum(data[,input$group1])
+      tot2 = sum(data[,input$group2])
+      res1 = matrix(NA,nrow=nrow(dd),ncol=5)
       res2 = res1
       res = list(res1,res2)
+    } else { # not pairwise
+      grp=0
+      res = matrix(NA,nrow=nrow(dd),ncol=5)
+      tot1 = sum(data)
     }
     withProgress(message = 'Calculating', value = 0, {
       for (i in 1:nrow(dd)){
         fasta=dd$Sequence[i]
-        if(input$checkbox==TRUE){
-          selected=sub("\\|","\\\\|",dd[i,"Accession"])
-          grepWord=paste("^","$",sep=selected)
-          if(grp==1){
+        grepWord = dd[i,"Accession"]
+          if(grp==1){ # pairwise
             index1 = grep(grepWord,infile1.1$Accession,fixed=F,value=F)
             index2 = grep(grepWord,infile1.2$Accession,fixed=F,value=F)
             indind1 = infile1.1[index1,]
             indind2 = infile1.2[index2,]
-          } else {
+            if(length(index1)>0 & !is.null(ProteinPlotMat(fasta,indind1))){  
+              res[[1]][i,]=c(unlist(summaryFunction(ProteinPlotMat(fasta,indind1)[[1]],indind1,dd[i,"Accession"])),tot1)
+            } else 
+              res[[1]][i,]=c(rep(0,ncol(res[[1]])-1),tot1)
+            if(length(index2)>0 & !is.null(ProteinPlotMat(fasta,indind2))){  
+              res[[2]][i,]=c(unlist(summaryFunction(ProteinPlotMat(fasta,indind2)[[1]],indind2,dd[i,"Accession"])),tot2)
+            } else 
+              res[[2]][i,]=c(rep(0,ncol(res[[2]])-1),tot2)
+          }
+        
+          if (grp==0) { # not pairwise
             index1 = grep(grepWord,indata$Accession,fixed=F,value=F)
             indind1=indata[index1,]
+            if(length(index1)>0 & !is.null(ProteinPlotMat(fasta,indind1))){  
+              res[i,]=c(unlist(summaryFunction(ProteinPlotMat(fasta,indind1)[[1]],indind1,dd[i,"Accession"])),tot1)
+            } else {
+              res[i,]=c(rep(0,ncol(res)-1),tot1)
+            }
           }
-        } else {
-          if(grp==1){
-            index1 = grep(dd[i,"Accession"],infile1.1$Accession,fixed=F,value=F)
-            index2 = grep(dd[i,"Accession"],infile1.2$Accession,fixed=F,value=F)
-            indind1 = infile1.1[index1,]
-            indind2 = infile1.2[index2,]
-            
-          } else {
-            index1=grep(dd[i,"Accession"],indata$Accession,fixed=T)
-            indind1=indata[index1,]
-          }}
         
-        if(class(res)=="list"){
-          if(length(index1)>0){  
-            res[[1]][i,]=unlist(summaryFunction(ProteinPlotMat(fasta,indind1)[[1]],indind1,dd[i,"Accession"]))
-          } else 
-            res[[1]][i,]=rep(0,ncol(res[[1]]))
-          if(length(index2)>0){  
-            res[[2]][i,]=unlist(summaryFunction(ProteinPlotMat(fasta,indind2)[[1]],indind2,dd[i,"Accession"]))
-          } else 
-            res[[2]][i,]=rep(0,ncol(res[[2]]))
-         } else
-          if(length(index1)>0){  
-            res[i,]=unlist(summaryFunction(ProteinPlotMat(fasta,indind1)[[1]],indind1,dd[i,"Accession"]))
-          } else {
-            res[i,]=rep(0,ncol(res))
-          }
       # Increment the progress bar, and update the detail text.
         incProgress(1/nrow(dd), detail = paste("Protein", dd[i,"Accession"]))
       # Pause for 0.1 seconds to simulate a long computation.
         Sys.sleep(0.1)
       }
     })
-    if(class(res)=="list")
+    if(grp==1){
       res = cbind(res[[1]],res[[2]]) 
+    }
     res = as.data.frame(res)
     rownames(res)=dd$Accession
     if (grp==1)
-      colnames(res)=c("coverage_gr1","nr.peptides_gr1","modification_types_gr1","modifications_detected_gr1",
-                    "coverage_gr2","nr.peptides_gr2","modification_types_gr2","modifications_detected_gr2")
+      colnames(res)=c("coverage_gr1","nr.peptides_gr1","modification_types_gr1","modifications_detected_gr1","tot1",
+                    "coverage_gr2","nr.peptides_gr2","modification_types_gr2","modifications_detected_gr2","tot2")
     if (grp==0)
-    colnames(res)=c("coverage","nr.peptides","modification_types","modifications_detected")
+      colnames(res)=c("coverage","nr.peptides","modification_types","modifications_detected","tot")
     res
   },options = list(lengthMenu = c(15, 30, 50), pageLength = 15),escape=FALSE,callback = JS(
     'table.on("click.dt", "tr", function() {
@@ -152,86 +150,106 @@ shinyServer(function(input, output) {
   output$my_prot = renderPlot({
     dd= readIn2()
     indata=readIn1()
-    indata=filter_amanda(indata,input$filter)
     dd= fasta_format(dd)
     selected=input$FastaList_rows_selected
     selected = selected[length(selected)]
-    if(input$checkbox==TRUE){
-      index = use_unique(dd,selected,indata)
+    print(dd[selected,"Accession"])
+    indata=filter_amanda(indata,input$filter) ## amanda score
+    if(input$checkbox==TRUE){ ## unique only
+      indata = indata[-grep(";",indata$Accession),]
+    }
+    if(!is.null(input$group1) & !is.null(input$group2)){ # pairwise
+      groups=splitToGroups(indata,input$group1,input$group2)
+      infile1.1 = groups[[1]]
+      infile1.2 = groups[[2]]
+      grp=1
+      res = list(infile1.1,infile1.2)
+      index1=grep(dd[(selected),"Accession"],res[[1]]$Accession,fixed=T)
+      #print("pp")
+      #print(head(grep(dd[(selected),"Accession"],res[[1]]$Accession,fixed=T,value=T)))
+      #print(length(index1))
+      index2=grep(dd[(selected),"Accession"],res[[2]]$Accession,fixed=T)
+      indind1=indata[index1,]
+      indind2=indata[index2,]
+      if(nrow(indind1)>0){
+        mm1 = ProteinPlotMat(dd[as.numeric(selected),"Sequence"],indind1)
+      }
+      if(nrow(indind2)>0){
+        mm2 = ProteinPlotMat(dd[as.numeric(selected),"Sequence"],indind2)
+      } 
+      par(mfrow=c(2,1))
+      if(class(mm1[[1]])=="matrix")
+        ProteinPlot(mm1[[1]],mm1[[2]])
+      if(class(mm2[[1]])=="matrix")
+        ProteinPlot(mm2[[1]],mm2[[2]])
     } else {
-    index=grep(dd[(selected),"Accession"],indata$Accession,fixed=T)
+      res = indata
+      grp=0
+      index=grep(dd[(selected),"Accession"],indata$Accession,fixed=T)
+      indind=indata[index,]
+      if(nrow(indind)>0){
+        mm = ProteinPlotMat(dd[as.numeric(selected),"Sequence"],indind)
+        ProteinPlot(mm[[1]],mm[[2]])
+      }
+      else
+        plot(1:100,pch=NULL)
     }
-    indind=indata[index,]
-    if(nrow(indind)>0){
-      mm = ProteinPlotMat(dd[as.numeric(selected),"Sequence"],indind)
-      
-      ProteinPlot(mm[[1]],mm[[2]])
-    }
-    else
-      plot(1:100,pch=NULL)
-      })
+  })
   ##################################################################    
   ## plot protein from Summary (tab 3)
   ##################################################################  
   
   output$my_prot1 =renderPlot({
     dd= readIn2()
-    grp=0
     indata=readIn1()
-    indata=filter_amanda(indata,input$filter)
     dd= fasta_format(dd)
-    if(!is.null(input$group1) & !is.null(input$group2)){
-      groups=splitToGroups(indata,input$group1,input$group2)
-      infile1.1 = groups[[1]]
-      infile1.2 = groups[[2]]
-      grp=1
-      res = list(infile1.1,infile1.2)
-    } else 
-      res = indata
     selected=input$summary_rows_selected
     selected = selected[length(selected)]
-    selected=sub("\\|","\\\\|",selected)
-    sel=(grep(selected,dd[,"Accession"]))
-    if(input$checkbox==TRUE){
-      if(grp==1){
-        index1 = use_unique(dd,sel,res[[1]])
-        index2 = use_unique(dd,sel,res[[2]])
-        indind1=indata[index1,]
-        indind2=indata[index2,]
-      }else  {
-        index = use_unique(dd,sel,res)
-        indind=indata[index,]
+    selected=sub("\\|","\\\\|",selected) # id
+    sel=(grep(selected,dd[,"Accession"])) # which number in dd list 
+    indata=filter_amanda(indata,input$filter) # filter on amanda score 
+    if(input$checkbox==TRUE){ # only want to use unique peptides 
+      multi=grep(";",indata$Accession)
+      uniq= grep(";",indata$Accession,invert=TRUE)
+      indata=indata[uniq,]
       }
+    
+    if(!is.null(input$group1) & !is.null(input$group2)){ # paired analysis
+      groups=splitToGroups(indata,input$group1,input$group2)
+      grp=1
+      res=list()
+      res[[1]] = groups[[1]]
+      res[[2]] = groups[[2]]
+    } else { # combine all
+      res = indata
+      grp=0
     }
-    if(input$checkbox==FALSE)
-      if(grp==1){
-        index1=grep(dd[(sel),"Accession"],res[[1]]$Accession,fixed=T)
-        index2=grep(dd[(sel),"Accession"],res[[2]]$Accession,fixed=T)
-        indind1=res[[1]][index1,]
-        indind2=res[[2]][index2,]
-    } else {
+    
+    if(grp==1){
+      index1=grep(dd[(sel),"Accession"],res[[1]]$Accession,fixed=T)
+      index2=grep(dd[(sel),"Accession"],res[[2]]$Accession,fixed=T)
+      indind1=res[[1]][index1,]
+      indind2=res[[2]][index2,]
+      if(nrow(indind1)>0){
+        mm1 = ProteinPlotMat(dd[as.numeric(sel),"Sequence"],indind1)
+      }
+      if(nrow(indind2)>0){
+        mm2 = ProteinPlotMat(dd[as.numeric(sel),"Sequence"],indind2)
+      } 
+      par(mfrow=c(2,1))
+      ProteinPlot(mm1[[1]],mm1[[2]])
+      ProteinPlot(mm2[[1]],mm2[[2]])
+        
+    }
+    if(grp==0) {
       index=grep(dd[(sel),"Accession"],res$Accession,fixed=T)
       indind=indata[index,]
-    }
-   if(grp==1){
-     if(nrow(indind1)>0){
-      mm1 = ProteinPlotMat(dd[as.numeric(sel),"Sequence"],indind1)
-     }
-     if(nrow(indind2)>0){
-       mm2 = ProteinPlotMat(dd[as.numeric(sel),"Sequence"],indind2)
-     } 
-     par(mfrow=c(2,1))
-     ProteinPlot(mm1[[1]],mm1[[2]])
-     ProteinPlot(mm2[[1]],mm2[[2]])
-     
-   } else {
       if(nrow(indind)>0){
         mm = ProteinPlotMat(dd[as.numeric(sel),"Sequence"],indind)
         ProteinPlot(mm[[1]],mm[[2]])
+      }
     }
-    else
-      plot(1:100,pch=NULL)
-  }})
+  })
     
   ##################################################################    
   ## info summary from Fasta List (tab 1)
@@ -417,17 +435,20 @@ output$plotGroups <- renderPlot({
   gr2 = input$group2
   indata=filter_amanda(infile1,input$filter)
   data= ProtPerSample(indata,infile2)
-  newdata=data/colSums(data)
+  rr = colSums(data)
+  print(rr)
   pp1 = getConfInt(data[,gr1,drop=F])
   pp2 = getConfInt(data[,gr2,drop=F])
-  plot(x=pp1[1,],y=pp2[1,],asp=1,pch=19)
+  df = data.frame(gr1=pp1[1,],gr2=pp2[1,])
+  toclick <<-df 
+  plot(x=pp1[1,],y=pp2[1,],asp=1,pch=19,ylab="group2",xlab="group1")
   segments(pp1[2,],pp2[1,],pp1[3,],pp2[1,])
   segments(pp1[1,],pp2[2,],pp1[1,],pp2[3,])
-  #points(x=pp1[2,],pch=".",y=pp2[1,])#,pch=".")
-  #points(x=pp1[3,],pch=".",y=pp2[1,])
-  #points(pp1[3,],pp2[1,],pch=".")
-  #plot(rowSums(newdata[,gr1,drop=F]),rowSums(newdata[,gr2,drop=F]),ylab="group2",xlab="group1")
   abline(0,1,col="red",lwd=3)
   
 })
+output$click_info <- renderPrint({
+  nearPoints(toclick, input$plot_click, addDist = FALSE,xvar="gr1",yvar="gr2")
+})
+
 })

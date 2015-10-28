@@ -35,8 +35,8 @@ shinyUI(fluidPage(
         tabPanel("Fasta List", DT::dataTableOutput("FastaList")),
         tabPanel("", plotOutput("my_prot"),dataTableOutput("info"),hr(),hr(),dataTableOutput("mod"),hr(),downloadButton('downloadData', 'Download full list')),
         tabPanel("Summary", dataTableOutput("summary")),
-        tabPanel("", plotOutput("my_prot1",height="600px")), #,dataTableOutput("info1"),hr(),hr(),dataTableOutput("mod1"),hr(),downloadButton('downloadData1', 'Download full list'))
-        tabPanel("ScatterPlot",plotOutput("plotGroups",height="600px",width = "600px"))
+        tabPanel("", plotOutput("my_prot1",height="600px"),dataTableOutput("info1"),hr(),hr(),dataTableOutput("mod1"),hr(),downloadButton('downloadData1', 'Download full list')),
+        tabPanel("ScatterPlot",plotOutput("plotGroups",height="600px",width = "600px",click="plot_click"),verbatimTextOutput("click_info"))
        )
   )
     )))

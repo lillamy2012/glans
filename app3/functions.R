@@ -106,19 +106,21 @@ ProteinPlotMat <- function(fasta,indind){ ### fasta is the sequence of protein i
   if (length(wrongMap)==nrow(indind)){
     return(NULL)
   } else if(length(wrongMap)>0 ){
-    print("WARNING")
+    #print("WARNING")
     indind=indind[-wrongMap,]
+    temp1<<-indind
     Sequences = indind$Sequence
   } 
   Modifications = indind$Modifications ### modifications reported 
   Modifications=sub("N-Term",1,Modifications)  ### rename
-  match_ind=(str_locate_all(pattern = Sequences, fasta)) ### start and end for each sequence to fasta file (list one item per sequence)
+  match_ind=(str_locate_all(pattern = Sequences, fasta)) ### start and end for each sequence to fasta file (list one item per sequence) - only works if no wrong maps
   for (i in 1:length(match_ind)){ ## for each sequence mapped to protein
     ii=match_ind[[i]] ## start and end in fasta
     if(!is.na(ii[1]))
       covmat[ii[1]:ii[2]]=covmat[ii[1]:ii[2]]+1 ## add one where cover
   }
   modtype=regmatches(Modifications, gregexpr("(?<=\\().*?(?=\\))", Modifications, perl=T))  ### type of modificantions per sequence (list)
+  #print(unique(unlist(modtype)))
   position <- strsplit(Modifications, "[^[:digit:]]") # position in peptid of modification (list matching modtype)
   v=list() ## list with new position (relative fasta file)
   for(i in 1:length(position)){
@@ -142,29 +144,41 @@ ProteinPlotMat <- function(fasta,indind){ ### fasta is the sequence of protein i
     rownames(totmat)=paste0(by_character,0:(length(by_character)-1))
   } else {
     totmat = covmat
+    colnames(totmat)="no mod."
+    rownames(totmat)=paste0(by_character,0:(length(by_character)-1))
   }
   return(list(totmat,by_character))
 }
 
 ProteinPlot <- function(totmat,by_character){
+  if(sum(totmat)==0){
+    print("ok")
+    re = plot(1:100)
+    return(re)
+  }
+  #print(dim(totmat))
   cols =c("darkblue","darkred","pink","darkorchid","orange","red","blue","green","mistyrose","lightblue","lightgrey")
   cols2= c(unlist(colorList[colnames(totmat)]))
   extra2 = setdiff(colnames(totmat),names(colorList))
+  chars = rep("",nrow(totmat))
   if(length(extra2)>0){
     extra = setdiff(cols,cols2)
     colsTot = c(cols2,extra[1:length(extra2)])
     names(colsTot) = c(names(cols2),extra2)
   } else 
     colsTot=cols2
-  bp = barplot(t(totmat[,c(names(colsTot)[c(2:length(colsTot),1)])]),col=colsTot[c(2:length(colsTot),1)],border = NA,names.arg=rep("",nrow(totmat)))
-  chars = rep("",nrow(totmat))
-  isnot = which(rowSums(totmat[,2:ncol(totmat),drop=F])>0)
-  chars[isnot]=by_character[isnot]
-  mtext(side=1,at = bp,chars,cex=0.8)
-  num=1:(length(by_character))
-  num[!num%in%isnot]=""
-  num = as.numeric(num)-1
-  mtext(side=1,at = bp,num,cex=0.6,line=1,las=2)
+  if(ncol(totmat)==1)
+    bp = barplot(t(totmat),col=colsTot,border = NA,names.arg=rep("",nrow(totmat)))
+  else{
+    bp = barplot(t(totmat[,c(names(colsTot)[c(2:length(colsTot),1)])]),col=colsTot[c(2:length(colsTot),1)],border = NA,names.arg=rep("",nrow(totmat)))
+    isnot = which(rowSums(totmat[,2:ncol(totmat),drop=F])>0)
+    chars[isnot]=by_character[isnot]
+    num=1:(length(by_character))
+    mtext(side=1,at = bp,chars,cex=0.8)
+    num[!num%in%isnot]=""
+    num = as.numeric(num)-1
+    mtext(side=1,at = bp,num,cex=0.6,line=1,las=2)
+    }
   legend("topright",legend=names(colsTot),fill=colsTot)
   return(totmat)
 }
@@ -222,6 +236,7 @@ splitToGroups <- function(infile,group1,group2){
   g2 = unlist(apply(i2,2,function(x) grep("X",x)))
   gr1 = infile[g1,]
   gr2 = infile[g2,]
+  #print(gr2[,3:9])
   res = list(gr1,gr2)
   return(res)
 }
