@@ -76,8 +76,12 @@ shinyServer(function(input, output) {
     if(input$checkbox==TRUE) ## unique only
       indata = indata[-grep(";",indata$Accession),]
     data= ProtPerSample(indata,infile2)
-    if(!is.null(input$group1) & !is.null(input$group2)){ ## pairwise
-      groups=splitToGroups(indata,input$group1,input$group2)
+    input$goButton
+    isolate({
+    g1 = input$group1
+    g2 = input$group2
+    if(!is.null(g1) & !is.null(g2)){ ## pairwise
+      groups=isolate(splitToGroups(indata,input$group1,input$group2))
       infile1.1 = groups[[1]]
       infile1.2 = groups[[2]]
       grp=1
@@ -91,6 +95,7 @@ shinyServer(function(input, output) {
       res = matrix(NA,nrow=nrow(dd),ncol=5)
       tot1 = sum(data)
     }
+    })
     withProgress(message = 'Calculating', value = 0, {
       for (i in 1:nrow(dd)){
         fasta=dd$Sequence[i]
@@ -215,7 +220,7 @@ shinyServer(function(input, output) {
       }
     
     if(!is.null(input$group1) & !is.null(input$group2)){ # paired analysis
-      groups=splitToGroups(indata,input$group1,input$group2)
+      groups=(splitToGroups(indata,input$group1,input$group2))
       grp=1
       res=list()
       res[[1]] = groups[[1]]
