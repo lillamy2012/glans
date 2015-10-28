@@ -69,12 +69,12 @@ shinyServer(function(input, output) {
   output$summary =  DT::renderDataTable({
     indata=infile1 
     dd = infile2
-    dd= fasta_format(dd)
     if(is.null(indata)|is.null(dd))
       return(NULL)
+    dd= fasta_format(dd)
     indata=filter_amanda(indata,input$filter) ## amanda score
     if(input$checkbox==TRUE) ## unique only
-      indata = indata[-grep(";",indata$Accession),]
+      indata = indata[grep(";",indata$Accession,invert=TRUE),]
     data= ProtPerSample(indata,infile2)
     input$goButton
     isolate({
@@ -207,8 +207,12 @@ shinyServer(function(input, output) {
   output$my_prot1 =renderPlot({
     dd= readIn2()
     indata=readIn1()
+    if(is.null(indata)|is.null(dd))
+      return(NULL)
     dd= fasta_format(dd)
     selected=input$summary_rows_selected
+    if(length(selected)<1)
+      return(NULL)
     selected = selected[length(selected)]
     selected=sub("\\|","\\\\|",selected) # id
     sel=(grep(selected,dd[,"Accession"])) # which number in dd list 

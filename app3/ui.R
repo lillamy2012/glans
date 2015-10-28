@@ -16,7 +16,7 @@ shinyUI(fluidPage(
       numericInput("filter", label = h4("Min. Amanda score"), value = 100),
       hr(),
       checkboxInput("checkbox", label = "Use ONLY peptides UNIQUE mapped to protein", value = FALSE),
-      checkboxInput("norm", label = "normalize", value = TRUE),
+      checkboxInput("norm", label = "Normalize based on total number peptides per sample", value = TRUE),
       
       conditionalPanel(
         condition = "output.done",
@@ -30,7 +30,10 @@ shinyUI(fluidPage(
       conditionalPanel(
         condition = "output.group",
         uiOutput("group2")),
-        actionButton("goButton", "Go!")),
+      
+      conditionalPanel(
+        condition = "output.group",
+        actionButton("goButton", "Go!"))),
     
   mainPanel(
       tabsetPanel(
