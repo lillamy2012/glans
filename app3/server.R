@@ -391,8 +391,6 @@ output$done <- reactive({
   oo <<-samp
   colnames(dd)
   indata=filter_amanda(infile1,input$filter)
-  print("pp")
-  #ProtPerSample(indata,dd)
 })
 
 output$group <- reactive({
@@ -436,6 +434,8 @@ output$group2 <- renderUI({
 output$plotGroups <- renderPlot({
   gr1 = input$group1
   gr2 = input$group2
+  if(is.null(gr1) | is.null(gr2))
+    return(NULL)
   indata=filter_amanda(infile1,input$filter)
   data= ProtPerSample(indata,infile2)
   rr = colSums(data)
