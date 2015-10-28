@@ -212,21 +212,33 @@ shinyServer(function(input, output) {
     selected = selected[length(selected)]
     selected=sub("\\|","\\\\|",selected) # id
     sel=(grep(selected,dd[,"Accession"])) # which number in dd list 
-    indata=filter_amanda(indata,input$filter) # filter on amanda score 
+    indata=filter_amanda(indata,input$filter) # filter on amanda score
+    
     if(input$checkbox==TRUE){ # only want to use unique peptides 
       multi=grep(";",indata$Accession)
       uniq= grep(";",indata$Accession,invert=TRUE)
       indata=indata[uniq,]
       }
     
+    data= ProtPerSample(indata,infile2)
+    print(data)
     if(!is.null(input$group1) & !is.null(input$group2)){ # paired analysis
       groups=(splitToGroups(indata,input$group1,input$group2))
       grp=1
       res=list()
+      tot=c(1,1)
       res[[1]] = groups[[1]]
       res[[2]] = groups[[2]]
+      if(input$norm){
+        tot[1]=sum(data[,input$group1])
+        tot[2]=sum(data[,input$group2])
+      }
     } else { # combine all
       res = indata
+      if(input$norm){
+        tot = sum(data)
+      } else 
+        tot=1
       grp=0
     }
     
@@ -242,8 +254,9 @@ shinyServer(function(input, output) {
         mm2 = ProteinPlotMat(dd[as.numeric(sel),"Sequence"],indind2)
       } 
       par(mfrow=c(2,1))
-      ProteinPlot(mm1[[1]],mm1[[2]])
-      ProteinPlot(mm2[[1]],mm2[[2]])
+      ys = max(max(mm2[[1]]/tot[2]),max(mm1[[1]]/tot[1]))
+      ProteinPlot(mm1[[1]]/tot[1],mm1[[2]],ylim=c(0,ys))
+      ProteinPlot(mm2[[1]]/tot[2],mm2[[2]],ylim=c(0,ys))
         
     }
     if(grp==0) {
@@ -251,7 +264,7 @@ shinyServer(function(input, output) {
       indind=indata[index,]
       if(nrow(indind)>0){
         mm = ProteinPlotMat(dd[as.numeric(sel),"Sequence"],indind)
-        ProteinPlot(mm[[1]],mm[[2]])
+        ProteinPlot(mm[[1]]/tot,mm[[2]])
       }
     }
   })

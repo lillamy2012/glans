@@ -16,6 +16,7 @@ shinyUI(fluidPage(
       numericInput("filter", label = h4("Min. Amanda score"), value = 100),
       hr(),
       checkboxInput("checkbox", label = "Use ONLY peptides UNIQUE mapped to protein", value = FALSE),
+      checkboxInput("norm", label = "normalize", value = TRUE),
       
       conditionalPanel(
         condition = "output.done",
