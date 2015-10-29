@@ -255,14 +255,14 @@ shinyServer(function(input, output) {
   })
   
   output$mod2 = renderDataTable({
-    if(is.null(res2)){
-      return(NULL)
-    }
     selected=input$summary_rows_selected
     input$filter
     input$group1
     input$group2
     input$checkbox
+    if(is.null(res2)){
+      return(NULL)
+    }
     if(length(selected)<1)
       return(NULL)
     selected = selected[length(selected)]
@@ -276,11 +276,11 @@ shinyServer(function(input, output) {
   ########################################################
   ## download tab 3
   #########################################################
-  datasetInput <- out
+ # datasetInput <- out
   
   output$downloadData1 <- downloadHandler(
     filename = function() { 
-      paste(paste(outname,paste(input$filter,input$checkbox,sep="_"),sep="_"),'.csv', sep='') 
+      paste(paste(outname,paste("a",input$filter,"u",input$checkbox,"n",input$norm,"g",!input$grouping,input$group1,sep="_"),sep="_"),'.csv', sep='') 
     },
     content = function(file) {
       write.csv(out, file)
@@ -289,14 +289,14 @@ shinyServer(function(input, output) {
   
   output$downloadData2 <- downloadHandler(
     filename = function() { 
-      paste(paste(outname,paste(input$filter,input$checkbox,sep="_"),sep="_"),'.csv', sep='') 
+      paste(paste(outname,paste("a",input$filter,"u",input$checkbox,"n",input$norm,"g",!input$grouping,input$group2,sep="_"),sep="_"),'.csv', sep='') 
     },
     content = function(file) {
       write.csv(out2, file)
     }
   )
   
-  outputOptions(output,'downloadData1', suspendWhenHidden=FALSE)
+ # outputOptions(output,'downloadData2', suspendWhenHidden=FALSE)
   
 ##################################################################    
 ## info summary from Summary (tab 3)
