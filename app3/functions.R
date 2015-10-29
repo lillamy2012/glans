@@ -81,13 +81,6 @@ filter_amanda=function(data,filt){
   return(data)
 }
 
-use_unique=function(data,index,indata){
-  selected=sub("\\|","\\\\|",data[index,"Accession"])
-  grepWord=paste("^","$",sep=selected)
-  index = grep(grepWord,indata$Accession,fixed=F)
-  return(index)
-  }
-
 checkIfMap <- function(fasta,Sequences){
   match_ind=(str_locate_all(pattern = Sequences, fasta))
   wrong=which(is.na(sapply(match_ind,"[",1)))
@@ -205,6 +198,8 @@ summaryFunction <- function(mm,indind,accession){
 
 modSummary <- function(mm){
   mod = rowSums(mm[,-1,drop=F])
+  if(sum(mod)==0)
+    return(NULL)
   tot = rowSums(mm)
   res = list()
   k = 0 

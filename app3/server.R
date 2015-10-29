@@ -206,7 +206,12 @@ shinyServer(function(input, output) {
       if(nrow(indind1)>0){
         mm1 = ProteinPlotMat(dd[as.numeric(sel),"Sequence"],indind1)
         info1 = summaryFunction(mm1[[1]],indind1,dd[(sel),"Accession"])
+        print("ok1")
         res <<- modSummary(mm1[[1]])
+        print("ok2")
+      } else{
+          mm1 = list(matrix(0,nrow=1,ncol=1),NULL)
+          print("ok")
       }
       if(nrow(indind2)>0){
         mm2 = ProteinPlotMat(dd[as.numeric(sel),"Sequence"],indind2)
@@ -246,6 +251,8 @@ shinyServer(function(input, output) {
     input$group1
     input$group2
     input$checkbox
+    if(is.null(res))
+      return(NULL)
     if(length(selected)<1)
       return(NULL)
     selected = selected[length(selected)]
