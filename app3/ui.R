@@ -39,9 +39,12 @@ shinyUI(fluidPage(
       tabsetPanel(
         tabPanel("Fasta List", DT::dataTableOutput("FastaList")),
         
-        tabPanel("", plotOutput("my_prot"),dataTableOutput("info"),
-                 hr(),hr(),dataTableOutput("mod"),hr(),
-                 downloadButton('downloadData', 'Download full list')),
+        tabPanel("", #conditionalPanel(
+                #condition = "output.track",
+                 plotOutput("my_prot",height="600px")),
+                #dataTableOutput("info"),
+                 #hr(),hr(),dataTableOutput("mod"),hr(),
+                 #downloadButton('downloadData', 'Download full list')),
         
         tabPanel("Summary", dataTableOutput("summary"),
                  downloadButton('downloadSummary', 'Download full list')),

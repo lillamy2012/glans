@@ -7,6 +7,7 @@ source("functions.R")
 library(stringr)
 
 ###################################
+ss=NULL
 out=NULL
 out2=NULL
 outname=NULL
@@ -61,9 +62,16 @@ shinyServer(function(input, output) {
   },options = list(lengthMenu = c(5, 30, 50), pageLength = 15),escape=FALSE,callback = JS(
     'table.on("click.dt", "tr", function() {
     tabs = $(".tabbable .nav.nav-tabs li a");
-    $(tabs[1]).click();})'))
+    $(tabs[3]).click();})'))
   
-
+  ##################################################################    
+  ## plot protein from fasta (tab 1)
+  ##################################################################  
+  
+  
+  
+  
+  
 ##################################################################    
 ## summarize peptides, modifications etc per protein (tab 'Summary')
 ##################################################################  
@@ -166,6 +174,9 @@ shinyServer(function(input, output) {
     if(is.null(indata)|is.null(dd))
       return(NULL)
     dd= fasta_format(dd)
+    track1 = track()
+    print(track1)
+    print("ss")
     selected=input$summary_rows_selected
     if(length(selected)<1)
       return(NULL)
@@ -206,12 +217,9 @@ shinyServer(function(input, output) {
       if(nrow(indind1)>0){
         mm1 = ProteinPlotMat(dd[as.numeric(sel),"Sequence"],indind1)
         info1 = summaryFunction(mm1[[1]],indind1,dd[(sel),"Accession"])
-        print("ok1")
         res <<- modSummary(mm1[[1]])
-        print("ok2")
       } else{
           mm1 = list(matrix(0,nrow=1,ncol=1),NULL)
-          print("ok")
       }
       if(nrow(indind2)>0){
         mm2 = ProteinPlotMat(dd[as.numeric(sel),"Sequence"],indind2)
@@ -403,5 +411,48 @@ output$group2 <- renderUI({
                      choices  = samp,
                      selected = NULL)
 })
+
+track <- function(){
+  dd=infile2
+  if(!is.null(input$summary_rows_selected)){
+    selected=input$summary_rows_selected
+    selected = selected[length(selected)]
+    selected=sub("\\|","\\\\|",selected) # id
+    sel=(grep(selected,dd[,"Accession"])) # 
+    print(sel)
+  }
+  print("in")
+  #print(sel)
+  print(new)
+  if (is.null(input$summary_rows_selected) & is.null(input$FastaList_rows_selected)){
+    print("1")
+    return(NULL)
+    } 
+  if (is.null(input$summary_rows_selected)){
+    new=as.numeric(input$FastaList_rows_selected[length(input$FastaList_rows_selected)])
+    print("2")
+    new
+    return(new)
+  } 
+  if (is.null(input$FastaList_rows_selected)){  
+      #new = input$summary_rows_selected[length(input$summary_rows_selected)]
+      new = sel  
+      print("3")
+      return(new)
+  }
+  if (new==sel){
+    new=as.numeric(input$FastaList_rows_selected[length(input$FastaList_rows_selected)])
+    print("4")
+    return(new)
+  }
+  if (new==input$FastaList_rows_selected[length(input$FastaList_rows_selected)]){
+    new = sel
+    print("5")
+    return(new)
+  }
+  print("6")
+  print(new)
+  return(new)
+}
 
 })

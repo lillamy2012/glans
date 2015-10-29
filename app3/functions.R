@@ -145,7 +145,6 @@ ProteinPlotMat <- function(fasta,indind){ ### fasta is the sequence of protein i
 
 ProteinPlot <- function(totmat,by_character,...){
   if(sum(totmat)==0){
-    print("ok")
     re = plot(1:100)
     return(re)
   }
