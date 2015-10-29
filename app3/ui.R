@@ -43,7 +43,8 @@ shinyUI(fluidPage(
                  hr(),hr(),dataTableOutput("mod"),hr(),
                  downloadButton('downloadData', 'Download full list')),
         
-        tabPanel("Summary", dataTableOutput("summary")),
+        tabPanel("Summary", dataTableOutput("summary"),
+                 downloadButton('downloadSummary', 'Download full list')),
         
         tabPanel("", plotOutput("my_prot1",height="600px"),dataTableOutput("info1"),
                  hr(),hr(),dataTableOutput("mod1"),hr(),

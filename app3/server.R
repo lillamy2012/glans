@@ -16,7 +16,7 @@ res2=NULL
 infile1=NULL
 infile2=NULL
 toclick=NULL
-
+summ=NULL
 shinyServer(function(input, output) {
 
 ################################################################
@@ -69,6 +69,7 @@ shinyServer(function(input, output) {
 ##################################################################  
   
   output$summary =  DT::renderDataTable({
+    summ=NULL
     indata=infile1 
     dd = infile2
     if(is.null(indata)|is.null(dd))
@@ -143,6 +144,7 @@ shinyServer(function(input, output) {
                     "coverage_gr2","nr.peptides_gr2","modification_types_gr2","modifications_detected_gr2","tot2")
     if (grp==0)
       colnames(res)=c("coverage","nr.peptides","modification_types","modifications_detected","tot")
+    summ <<- res
     res
   },options = list(lengthMenu = c(15, 30, 50), pageLength = 15),escape=FALSE,callback = JS(
     'table.on("click.dt", "tr", function() {
@@ -276,7 +278,7 @@ shinyServer(function(input, output) {
   ########################################################
   ## download tab 3
   #########################################################
- # datasetInput <- out
+
   
   output$downloadData1 <- downloadHandler(
     filename = function() { 
@@ -296,7 +298,14 @@ shinyServer(function(input, output) {
     }
   )
   
- # outputOptions(output,'downloadData2', suspendWhenHidden=FALSE)
+ output$downloadSummary <- downloadHandler(
+   filename = function() { 
+     paste(paste("a",input$filter,"u",input$checkbox,"n",input$norm,"g",!input$grouping,input$group1,input$group2,sep="_"),'.csv',sep="")
+   },
+   content = function(file) {
+     write.csv(summ, file)
+   }
+ )
   
 ##################################################################    
 ## info summary from Summary (tab 3)
