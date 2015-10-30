@@ -8,6 +8,8 @@ library(stringr)
 
 ###################################
 ss=NULL
+leS=0
+leF=0
 out=NULL
 out2=NULL
 outname=NULL
@@ -176,13 +178,14 @@ shinyServer(function(input, output) {
     dd= fasta_format(dd)
     track1 = track()
     print(track1)
-    print("ss")
-    selected=input$summary_rows_selected
-    if(length(selected)<1)
+    print(ss)
+    sel=ss
+    #selected=input$summary_rows_selected
+    if(length(sel)<1)
       return(NULL)
-    selected = selected[length(selected)]
-    selected=sub("\\|","\\\\|",selected) # id
-    sel=(grep(selected,dd[,"Accession"])) # which number in dd list 
+    #selected = selected[length(selected)]
+    #selected=sub("\\|","\\\\|",selected) # id
+    #sel=(grep(selected,dd[,"Accession"])) # which number in dd list 
     indata=filter_amanda(indata,input$filter) # filter on amanda score
     if(input$checkbox==TRUE){ # only want to use unique peptides 
       multi=grep(";",indata$Accession)
@@ -254,25 +257,30 @@ shinyServer(function(input, output) {
   ##################################################################  
   
   output$mod1 = renderDataTable({
-    selected=input$summary_rows_selected
+    track1 = track()
+    print(track1)
+    print(ss)
+    sel=ss
+    #selected=input$summary_rows_selected
     input$filter
     input$group1
     input$group2
     input$checkbox
     if(is.null(res))
       return(NULL)
-    if(length(selected)<1)
+    if(length(sel)<1)
       return(NULL)
-    selected = selected[length(selected)]
-    selected=sub("\\|","\\\\|",selected) # id
+    #selected = selected[length(selected)]
+    #selected=sub("\\|","\\\\|",selected) # id
     colnames(res) = c("Position","Modification","# Modifications","Percentage of all peptides")
     out <<- res
-    outname <<- selected
+    outname <<- infile2[sel,"Accession"]
     return(res)
   })
   
   output$mod2 = renderDataTable({
-    selected=input$summary_rows_selected
+    sel=ss
+    #selected=input$summary_rows_selected
     input$filter
     input$group1
     input$group2
@@ -280,13 +288,13 @@ shinyServer(function(input, output) {
     if(is.null(res2)){
       return(NULL)
     }
-    if(length(selected)<1)
+    if(length(sel)<1)
       return(NULL)
-    selected = selected[length(selected)]
-    selected=sub("\\|","\\\\|",selected) # id
+    #selected = selected[length(selected)]
+    #selected=sub("\\|","\\\\|",selected) # id
     colnames(res2) = c("Position","Modification","# Modifications","Percentage of all peptides")
     out2 <<- res2
-    outname <<- selected
+    outname <<- infile2[sel,"Accession"]
     return(res2)
   })
   
@@ -413,46 +421,64 @@ output$group2 <- renderUI({
 })
 
 track <- function(){
+  ## no selctions at all
+  if(is.null(input$FastaList_rows_selected) & is.null(input$summary_rows_selected)){
+    new=NULL
+    print("both null") 
+    ss <-- new
+    return(NULL)
+  }
   dd=infile2
+  if(is.null(dd))
+    return(NULL)
+  ## set up fl
+  if(!is.null(input$FastaList_rows_selected)){
+    print("FastaList not empty, fl1")
+    fl1 = as.numeric(input$FastaList_rows_selected[length(input$FastaList_rows_selected)])
+    #print(fl1)
+  }
+  ## set up summary
   if(!is.null(input$summary_rows_selected)){
+    print("summary not empty, su1")
     selected=input$summary_rows_selected
+    #print(selected)
     selected = selected[length(selected)]
     selected=sub("\\|","\\\\|",selected) # id
-    sel=(grep(selected,dd[,"Accession"])) # 
-    print(sel)
+    #print(selected)
+    su1=(grep(selected,dd[,"Accession"])) # 
+    print(su1)
   }
-  print("in")
-  #print(sel)
-  print(new)
-  if (is.null(input$summary_rows_selected) & is.null(input$FastaList_rows_selected)){
-    print("1")
-    return(NULL)
-    } 
-  if (is.null(input$summary_rows_selected)){
-    new=as.numeric(input$FastaList_rows_selected[length(input$FastaList_rows_selected)])
-    print("2")
-    new
-    return(new)
-  } 
-  if (is.null(input$FastaList_rows_selected)){  
-      #new = input$summary_rows_selected[length(input$summary_rows_selected)]
-      new = sel  
-      print("3")
-      return(new)
+  
+  leFasta = length(input$FastaList_rows_selected)
+  print("lF")
+  print(leFasta)
+  print(leF)
+  leSummary = length(input$summary_rows_selected)
+  print("SU")
+  print(leSummary)
+  print(leS)
+  if(leSummary<leS | leFasta<leF){
+    print("disselection")
+    leS<<-leSummary
+    leF<<-leFasta
+    new = ss
   }
-  if (new==sel){
-    new=as.numeric(input$FastaList_rows_selected[length(input$FastaList_rows_selected)])
-    print("4")
-    return(new)
+  if(leSummary>leS){
+    print("summary selction")
+    leS <<-leSummary
+    new = su1
+    ss <<- new
   }
-  if (new==input$FastaList_rows_selected[length(input$FastaList_rows_selected)]){
-    new = sel
-    print("5")
-    return(new)
+  
+  if(leFasta>leF){
+    print("fasta selection")
+    leF <<-leFasta
+    new = fl1
+    ss <<- new
   }
-  print("6")
-  print(new)
+  #print("nothing")
+  #new=NULL
+
   return(new)
 }
-
-})
+  })
