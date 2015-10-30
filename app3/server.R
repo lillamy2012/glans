@@ -177,15 +177,9 @@ shinyServer(function(input, output) {
       return(NULL)
     dd= fasta_format(dd)
     track1 = track()
-    print(track1)
-    print(ss)
     sel=ss
-    #selected=input$summary_rows_selected
     if(length(sel)<1)
       return(NULL)
-    #selected = selected[length(selected)]
-    #selected=sub("\\|","\\\\|",selected) # id
-    #sel=(grep(selected,dd[,"Accession"])) # which number in dd list 
     indata=filter_amanda(indata,input$filter) # filter on amanda score
     if(input$checkbox==TRUE){ # only want to use unique peptides 
       multi=grep(";",indata$Accession)
@@ -258,10 +252,9 @@ shinyServer(function(input, output) {
   
   output$mod1 = renderDataTable({
     track1 = track()
-    print(track1)
-    print(ss)
     sel=ss
-    #selected=input$summary_rows_selected
+    input$summary_rows_selected
+    input$FastaList_rows_selected
     input$filter
     input$group1
     input$group2
@@ -270,8 +263,6 @@ shinyServer(function(input, output) {
       return(NULL)
     if(length(sel)<1)
       return(NULL)
-    #selected = selected[length(selected)]
-    #selected=sub("\\|","\\\\|",selected) # id
     colnames(res) = c("Position","Modification","# Modifications","Percentage of all peptides")
     out <<- res
     outname <<- infile2[sel,"Accession"]
@@ -279,8 +270,10 @@ shinyServer(function(input, output) {
   })
   
   output$mod2 = renderDataTable({
+    track1 = track()
     sel=ss
-    #selected=input$summary_rows_selected
+    input$summary_rows_selected
+    input$FastaList_rows_selected
     input$filter
     input$group1
     input$group2
@@ -290,8 +283,6 @@ shinyServer(function(input, output) {
     }
     if(length(sel)<1)
       return(NULL)
-    #selected = selected[length(selected)]
-    #selected=sub("\\|","\\\\|",selected) # id
     colnames(res2) = c("Position","Modification","# Modifications","Percentage of all peptides")
     out2 <<- res2
     outname <<- infile2[sel,"Accession"]
@@ -336,6 +327,7 @@ shinyServer(function(input, output) {
   
   output$info1 = renderDataTable({
     input$summary_rows_selected
+    input$FastaList_rows_selected
     input$filter
     input$group1
     input$group2
@@ -433,30 +425,17 @@ track <- function(){
     return(NULL)
   ## set up fl
   if(!is.null(input$FastaList_rows_selected)){
-    print("FastaList not empty, fl1")
     fl1 = as.numeric(input$FastaList_rows_selected[length(input$FastaList_rows_selected)])
-    #print(fl1)
   }
   ## set up summary
   if(!is.null(input$summary_rows_selected)){
-    print("summary not empty, su1")
     selected=input$summary_rows_selected
-    #print(selected)
     selected = selected[length(selected)]
     selected=sub("\\|","\\\\|",selected) # id
-    #print(selected)
     su1=(grep(selected,dd[,"Accession"])) # 
-    print(su1)
   }
-  
   leFasta = length(input$FastaList_rows_selected)
-  print("lF")
-  print(leFasta)
-  print(leF)
   leSummary = length(input$summary_rows_selected)
-  print("SU")
-  print(leSummary)
-  print(leS)
   if(leSummary<leS | leFasta<leF){
     print("disselection")
     leS<<-leSummary
@@ -476,9 +455,6 @@ track <- function(){
     new = fl1
     ss <<- new
   }
-  #print("nothing")
-  #new=NULL
-
   return(new)
 }
   })
