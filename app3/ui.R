@@ -1,4 +1,5 @@
 library(shiny)
+library(DT)
 shinyUI(fluidPage(
   titlePanel("Protein analysis app (PaApp)"),
   sidebarLayout(
