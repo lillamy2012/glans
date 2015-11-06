@@ -342,23 +342,29 @@ shinyServer(function(input, output) {
   output$plotGroups <- renderPlot({
     gr1 = input$group1
     gr2 = input$group2
-    if(is.null(gr1) | is.null(gr2))
-      return(NULL)
-    indata=filter_amanda(infile1,input$filter)
-    if(input$checkbox==TRUE) ## unique only
-      indata = indata[grep(";",indata$Accession,invert=TRUE),]
-    if(input$norm){
-      data= ProtPerSample(indata,infile2)
-      pp1 = getConfInt(data[,gr1,drop=F])
-      pp2 = getConfInt(data[,gr2,drop=F])
-      df = data.frame(gr1=pp1[1,],gr2=pp2[1,])
-      toclick <<-df 
-      plot(x=pp1[1,],y=pp2[1,],asp=1,pch=19,ylab="group2",xlab="group1")
-      segments(pp1[2,],pp2[1,],pp1[3,],pp2[1,])
-      segments(pp1[1,],pp2[2,],pp1[1,],pp2[3,])
-      abline(0,1,col="red",lwd=3)
-    } else
-      return(NULL)
+    input$norm
+    if(is.null(gr1) | is.null(gr2)){
+      plot(1,1,col="white",axes=FALSE,ylab="",xlab="")
+      text(1,1,"Need to define to groups before you can see this plot",cex=1)
+    } else{
+      indata=filter_amanda(infile1,input$filter)
+      if(input$checkbox==TRUE) ## unique only
+        indata = indata[grep(";",indata$Accession,invert=TRUE),]
+      if(input$norm){
+        data= ProtPerSample(indata,infile2)
+        pp1 = getConfInt(data[,gr1,drop=F])
+        pp2 = getConfInt(data[,gr2,drop=F])
+        df = data.frame(gr1=pp1[1,],gr2=pp2[1,])
+        toclick <<-df 
+        plot(x=pp1[1,],y=pp2[1,],asp=1,pch=19,ylab="group2",xlab="group1")
+        segments(pp1[2,],pp2[1,],pp1[3,],pp2[1,])
+        segments(pp1[1,],pp2[2,],pp1[1,],pp2[3,])
+        abline(0,1,col="red",lwd=3)
+      } else{
+        plot(1,1,col="white",axes=FALSE,ylab="",xlab="")
+        text(1,1,"This type of plot doesn't make sense when data not is normalized",cex=1)
+      }
+    } 
     
   })
   output$click_info <- renderPrint({

@@ -34,7 +34,7 @@ shinyUI(fluidPage(
       
       conditionalPanel(
         condition = "output.group",
-        actionButton("goButton", "Go!")))p,
+        actionButton("goButton", "Go!"))),
     
   mainPanel(
       tabsetPanel(

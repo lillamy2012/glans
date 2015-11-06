@@ -6,6 +6,7 @@ shinyServer(function(input, output) {
   load("table.Rdata")
   tot = cbind(gene=rownames(tot),tot)
   selected=NULL
+  use=NULL
   
   createSubSetData=function(){
     sel=tot[which(tot$group==input$Group),]
@@ -83,7 +84,10 @@ shinyServer(function(input, output) {
       plotD = asinh(dt)
     if(!input$transf)
       plotD = dt
-    #print(head(plotD))
+    toclick = melt(cbind(rownames(plotD),plotD))
+    toclick$variable2 = as.numeric(toclick$variable)
+    print(str(toclick))
+    use<<-toclick
     matplot(t(plotD),type="l",lty=1,xaxt="n",yaxt="n",ylab="rpkm")
     axis(1,at=1:22,colnames(dt),las=2)
     ii = seq.int(range(plotD)[1],range(plotD)[2],length.out =6)
@@ -94,9 +98,9 @@ shinyServer(function(input, output) {
     axis(2,at=seq.int(range(plotD)[1],range(plotD)[2],length.out =6),labels = lab)
     })
   
-  #output$click_info <- renderPrint({
-   # nearPoints(selected, input$plot_click, addDist = FALSE)
-  #})
+  output$click_info <- renderPrint({
+    nearPoints(use, input$plot_click, addDist = FALSE,xvar="variable2",yvar="value",threshold = 10)
+  })
   
   output$selc = renderPlot({
     dt=groupData()

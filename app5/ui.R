@@ -22,7 +22,7 @@ shinyUI(fluidPage(
      checkboxInput("transf",label="asinh transform data",value=TRUE)
      ),
 
-    mainPanel(plotOutput("matplot"),#click="plot_click"),verbatimTextOutput("click_info"),
+    mainPanel(plotOutput("matplot",click="plot_click"),verbatimTextOutput("click_info"),
               hr(),
               plotOutput("selc"),
               downloadButton('downloadData', 'Download list as it is'),
