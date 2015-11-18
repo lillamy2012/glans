@@ -1,7 +1,7 @@
 library(shiny)
 library(reshape2)
 
-outputDir <- "responses"
+outputDir <- "/Users/elin.axelsson/glans/app5/responses"
 saveData <- function(data) {
   data <- t(data)
   # Create a unique file name
@@ -14,6 +14,12 @@ saveData <- function(data) {
     row.names = FALSE, quote = TRUE
   )
 }
+removeData <-function(){
+  tt= unlink(paste(outputDir,"tomo.csv",sep="/"))
+print(paste(outputDir,"tomo.csv",sep="/"))
+    print(tt)
+  }
+
 
 loadData <- function() {
   # Read all the files into a list
@@ -31,6 +37,7 @@ shinyServer(function(input, output,session) {
   tot = cbind(gene=rownames(tot),tot)
   selected=NULL
   use=NULL
+  keep=NULL
   #updateTextInput(session, "collection_txt", value = tet ,label = "Foo:" )
   
   createSubSetData=function(){
@@ -100,10 +107,22 @@ shinyServer(function(input, output,session) {
   
   observe({
     updateTextInput(session, "collection_txt", value = rowSelect() ,label = "Foo:" )
-    if(length(rowSelect())>0){ # no earlier selections
+    if(length(rowSelect())>0){
+      keep<<- 1
+    }
+    if(length(rowSelect())>0){ 
       mych<<- as.numeric(rowSelect())
       saveData(mych)
     } 
+    print(!is.null(keep))
+    if(length(rowSelect())==0 & !is.null(keep)){ # remove last 
+      mych<<- NULL
+      removeData()
+    } 
+    if(length(mych)>0){
+      keep<<- 1
+    }
+    
   })
   
   output$tot_data = renderDataTable({
