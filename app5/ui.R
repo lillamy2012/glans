@@ -6,7 +6,7 @@ shinyUI(fluidPage(
     sidebarPanel(
       radioButtons("Group","Group",
                    c("Sperm/young rep" = 1,
-                   "10DAF/20DAF1mm" = 2,
+                   "15DAFembryo/20DAF1mm" = 2,
                    "20DAF1mm/20DAFsoft" = 3,
                    "20DAFsoft/spore" =4)),
       

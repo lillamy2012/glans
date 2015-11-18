@@ -1,6 +1,5 @@
 library(shiny)
-
-
+library(reshape2)
 
 shinyServer(function(input, output) {
   load("table.Rdata")
@@ -22,7 +21,7 @@ shinyServer(function(input, output) {
       sel$one = sel$condition10DAF_big
       sel$two = sel$condition20DAF1mmembryo_big
       sel$avdist1 = sel$condition10DAF_avdist
-      sel$avdist2 = sel$condition20DAF1mmembryo_avdist
+      sel$avdist2 = sel$condition20DAF1mmembryo_avdist 
       sel$mdist1 = sel$condition10DAF_mdist
       sel$mdist2 = sel$condition20DAF1mmembryo_mdist
     }
@@ -107,6 +106,8 @@ shinyServer(function(input, output) {
     input$padj
     input$Group
     input$Set
+    
+    
     input$minavFC
     input$minFC
     a = which(dt$one==1 & dt$mdist1>input$minFC & dt$avdist1>input$minavFC)
@@ -129,7 +130,4 @@ shinyServer(function(input, output) {
       write.csv(selected, file)
     }
   )
-  
-  
-  
 })

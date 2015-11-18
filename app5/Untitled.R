@@ -1,6 +1,7 @@
-genes= read.table("../../../Marchantia_csf2/analysis/genes.fpkm_table",row.names=1,header=T)
-samples = read.table("../../../Marchantia_csf2/analysis/samples.table",header=T,row.names=1)
-counts=read.table("../../../Marchantia_csf2/analysis/genes.count_table",row.names=1,header=T)
+library("DESeq2")
+genes= read.table("/Users/elin.axelsson/berger_group/user/elin.axelsson/analyses/cuffmerg_cuffquant_cuffnorm//Marchantia_csf2/analysis/genes.fpkm_table",row.names=1,header=T)
+samples = read.table("/Users/elin.axelsson/berger_group/user/elin.axelsson/analyses/cuffmerg_cuffquant_cuffnorm/Marchantia_csf2/analysis/samples.table",header=T,row.names=1)
+counts=read.table("/Users/elin.axelsson/berger_group/user/elin.axelsson/analyses/cuffmerg_cuffquant_cuffnorm/Marchantia_csf2/analysis/genes.count_table",row.names=1,header=T)
 ## rpkm to TPM 
 #tpm = apply(genes,2,function(x) y=10^6*x/(sum(x)))
 s_names = sapply(strsplit(samples[,"file"],"/"),"[[",10)
@@ -39,13 +40,13 @@ notinc = list(
   c("Intercept","conditionYoung_male_rep"),
   c("Intercept","conditionMp_sperm"),
   c("Intercept","condition20DAF1mmembryo"),
-  c("Intercept","condition10DAF"),
+  c("Intercept","condition15DAFembryo"),
   c("Intercept","condition20DAFSoftembryo"),
   c("Intercept","condition20DAF1mmembryo"),
   c("Intercept","conditionSpore"),
   c("Intercept","condition20DAFSoftembryo")
 )
-ofInt = c("conditionMp_sperm","conditionYoung_male_rep","condition10DAF","condition20DAF1mmembryo","condition20DAF1mmembryo","condition20DAFSoftembryo","condition20DAFSoftembryo","conditionSpore")
+ofInt = c("conditionMp_sperm","conditionYoung_male_rep","condition15DAFembryo","condition20DAF1mmembryo","condition20DAF1mmembryo","condition20DAFSoftembryo","condition20DAFSoftembryo","conditionSpore")
 
 statsList = list()
 for(i in 1:length(ofInt)){
@@ -57,7 +58,7 @@ tot = cbind(keep,res_anova$padj,sttot)
 colnames(tot)[duplicated(colnames(tot))] = paste("v2",colnames(tot)[duplicated(colnames(tot))],sep="_")
 tot$group= 0
 gr1 = which(tot$conditionMp_sperm_big+tot$conditionYoung_male_rep_big>0)
-gr2 = which(tot$condition10DAF_big+tot$condition20DAF1mmembryo_big>0)
+gr2 = which(tot$condition15DAFembryo_big+tot$condition20DAF1mmembryo_big>0)
 gr3 = which(tot$condition20DAFSoftembryo_big+tot$v2_condition20DAF1mmembryo_big>0)
 gr4 = which(tot$v2_condition20DAFSoftembryo_big+tot$conditionSpore_big>0)
 tot$group[gr1]=1
@@ -68,7 +69,7 @@ tot = tot[,c("young_male_reprod_r1", "young_male_reprod_r2", "Mp_WT_sperm", "r_1
              "20DAF1mmembry1","20DAF1mmembry2","20DAFSoftembry1","20DAFSoftembry2" ,"spore1","spore2","female_3mm_r1", "female_3mm_r2","Mp_female", 
              "Male_thalli_r1", "Male_thalli_r2", "Mp_thalli","res_anova$padj",
              "conditionMp_sperm_big","conditionMp_sperm_mdist","conditionMp_sperm_avdist", "conditionYoung_male_rep_big" ,"conditionYoung_male_rep_mdist",
-          "conditionYoung_male_rep_avdist", "condition10DAF_big", "condition10DAF_mdist", "condition10DAF_avdist", "condition20DAF1mmembryo_big", "condition20DAF1mmembryo_mdist"
+          "conditionYoung_male_rep_avdist", "condition15DAFembryo_big", "condition15DAFembryo_mdist", "condition15DAFembryo_avdist", "condition20DAF1mmembryo_big", "condition20DAF1mmembryo_mdist"
           ,"condition20DAF1mmembryo_avdist", "v2_condition20DAF1mmembryo_big", "v2_condition20DAF1mmembryo_mdist","v2_condition20DAF1mmembryo_avdist",
 "v2_condition20DAFSoftembryo_mdist","v2_condition20DAFSoftembryo_avdist", "conditionSpore_big", "conditionSpore_mdist", "conditionSpore_avdist", "group")]
 colnames(tot)[4:6] = c("Mp_sperm1","Mp_sperm2","Mp_sperm3")
