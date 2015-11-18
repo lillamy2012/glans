@@ -20,10 +20,12 @@ shinyUI(fluidPage(
      numericInput("minFC", label = h4("Min fold change"), value = 2),
      numericInput("minavFC", label = h4("Min average fold change"), value = 2),
      checkboxInput("transf",label="asinh transform data",value=TRUE)
+    # textInput("collection_txt",label="Foo")
      ),
 
     mainPanel(plotOutput("matplot",click="plot_click"),verbatimTextOutput("click_info"),
               hr(),
+              #textOutput("chos"),
               plotOutput("selc"),
               downloadButton('downloadData', 'Download list as it is'),
               dataTableOutput("tot_data")

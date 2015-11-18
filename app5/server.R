@@ -1,11 +1,37 @@
 library(shiny)
 library(reshape2)
 
-shinyServer(function(input, output) {
+outputDir <- "responses"
+saveData <- function(data) {
+  data <- t(data)
+  # Create a unique file name
+  #fileName <- sprintf("%s_%s.csv", as.integer(Sys.time()), digest::digest(data))
+  fileName <- "tomo.csv"
+  # Write the file to the local system
+  write.csv(
+    x = data,
+    file = file.path(outputDir, fileName), 
+    row.names = FALSE, quote = TRUE
+  )
+}
+
+loadData <- function() {
+  # Read all the files into a list
+  files <- list.files(outputDir, full.names = TRUE)
+  data <- lapply(files, read.csv, stringsAsFactors = FALSE) 
+  # Concatenate all data together into one data.frame
+  data <- do.call(rbind, data)
+  data
+}
+mych = loadData()
+
+
+shinyServer(function(input, output,session) {
   load("table.Rdata")
   tot = cbind(gene=rownames(tot),tot)
   selected=NULL
   use=NULL
+  #updateTextInput(session, "collection_txt", value = tet ,label = "Foo:" )
   
   createSubSetData=function(){
     sel=tot[which(tot$group==input$Group),]
@@ -61,13 +87,47 @@ shinyServer(function(input, output) {
     return(sel)
   }
 
-  output$tot_data=renderDataTable({
+  output$totdata=renderDataTable({
     dt=groupData()
-    print(nrow(dt))
     dt[,1:23]
     selected<<-dt[,1:23]
     dt
 })
+  rowSelect <- reactive({
+    paste(sort(unique(input[["rows"]])),sep=',')
+  })
+  
+  
+  observe({
+    updateTextInput(session, "collection_txt", value = rowSelect() ,label = "Foo:" )
+    if(length(rowSelect())>0){ # no earlier selections
+      mych<<- as.numeric(rowSelect())
+      saveData(mych)
+    } 
+  })
+  
+  output$tot_data = renderDataTable({
+    dt=groupData()
+    dt[,1:23]
+    selected<<-dt[,1:23]
+    addCheckboxButtons <- paste0('<input type="checkbox" name="row', rownames(dt),'" value="', rownames(dt), '">',"")
+    #Display table with checkbox buttons
+    prec = unique(unlist(mych))
+    addCheckboxButtons[prec] <- paste0('<input type="checkbox" name="row', rownames(dt)[prec],'" value="', rownames(dt)[prec], '"checked=1"', '">',"")
+    cbind(Pick=addCheckboxButtons, dt,id=1:nrow(dt))
+  },escape = FALSE, options = list(bSortClasses = TRUE, aLengthMenu = c(5, 25, 50), iDisplayLength = 25),
+  callback = "function(table) {
+    table.on('change.dt', 'tr td input:checkbox', function() {
+  setTimeout(function () {
+  Shiny.onInputChange('rows', $(this).add('tr td input:checkbox:checked').parent().siblings(':last-child').map(function() {
+  return $(this).text();
+  }).get())
+  }, 10); 
+});
+  }")
+  
+ 
+  
   output$matplot = renderPlot({
     dt=groupData()
     dt =dt[,2:23]
@@ -85,7 +145,6 @@ shinyServer(function(input, output) {
       plotD = dt
     toclick = melt(cbind(rownames(plotD),plotD))
     toclick$variable2 = as.numeric(toclick$variable)
-    print(str(toclick))
     use<<-toclick
     matplot(t(plotD),type="l",lty=1,xaxt="n",yaxt="n",ylab="rpkm")
     axis(1,at=1:22,colnames(dt),las=2)
@@ -117,7 +176,6 @@ shinyServer(function(input, output) {
     stat1 = length(setdiff(a,b))
     stat2 = length(setdiff(b,a))
     stats=c(stat1o2,stat12,stat1,stat2)
-    print(stats)
     bp=barplot(stats,col=c("lightblue","darkblue","lightyellow","lightgreen"),names.arg=c("at least one","in both","first only","second only"),ylab="nr genes")
     text(x=bp,y=max(stats)/2,labels =stats,cex=2)
     })
