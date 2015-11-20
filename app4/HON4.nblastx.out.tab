@@ -1,0 +1,162 @@
+TBLASTN 2.2.29+
+
+
+Reference: Stephen F. Altschul, Thomas L. Madden, Alejandro A.
+Schaffer, Jinghui Zhang, Zheng Zhang, Webb Miller, and David J.
+Lipman (1997), "Gapped BLAST and PSI-BLAST: a new generation of
+protein database search programs", Nucleic Acids Res. 25:3389-3402.
+
+
+
+Database: merged.fa
+           80,645 sequences; 234,377,697 total letters
+
+
+
+Query= Q1
+
+Length=480
+                                                                      Score     E
+Sequences producing significant alignments:                          (Bits)  Value
+
+  TCONS_00058177 gene=XLOC_020170                                     42.7    0.003
+  TCONS_00030973 gene=XLOC_010850                                     33.9    1.7  
+  TCONS_00067582 gene=XLOC_023520                                     33.5    2.0  
+  TCONS_00068243 gene=XLOC_023730                                     33.5    2.6  
+  TCONS_00068244 gene=XLOC_023730                                     33.5    2.6  
+  TCONS_00030974 gene=XLOC_010850                                     32.0    7.5  
+  TCONS_00030971 gene=XLOC_010850                                     32.0    7.9  
+  TCONS_00030970 gene=XLOC_010850                                     32.0    8.1  
+  TCONS_00030972 gene=XLOC_010850                                     31.6    8.7  
+
+
+> TCONS_00058177 gene=XLOC_020170
+Length=2627
+
+ Score = 42.7 bits (99),  Expect = 0.003, Method: Compositional matrix adjust.
+ Identities = 19/34 (56%), Positives = 24/34 (71%), Gaps = 0/34 (0%)
+ Frame = +3
+
+Query  65   HPPYSEMICAAIAALNEPDGSSKMAISRYIERCY  98
+            HPPY EMI  AIA L E  GSS+ AI++++E  Y
+Sbjct  654  HPPYVEMIREAIATLKERTGSSQYAIAKHLEDKY  755
+
+
+> TCONS_00030973 gene=XLOC_010850
+Length=3095
+
+ Score = 33.9 bits (76),  Expect = 1.7, Method: Compositional matrix adjust.
+ Identities = 13/31 (42%), Positives = 21/31 (68%), Gaps = 0/31 (0%)
+ Frame = +1
+
+Query  66    PPYSEMICAAIAALNEPDGSSKMAISRYIER  96
+             P Y +++  A+  L +P+GSS  +I+ YIER
+Sbjct  1858  PRYDDIVVEAVLGLKDPNGSSNASIASYIER  1950
+
+
+> TCONS_00067582 gene=XLOC_023520
+Length=1317
+
+ Score = 33.5 bits (75),  Expect = 2.0, Method: Compositional matrix adjust.
+ Identities = 14/34 (41%), Positives = 23/34 (68%), Gaps = 0/34 (0%)
+ Frame = +1
+
+Query  63   MPHPPYSEMICAAIAALNEPDGSSKMAISRYIER  96
+            + HP Y+ +I  AI++L +  GSS +AI + IE+
+Sbjct  472  LQHPTYANLIHDAISSLKQRGGSSAIAIRKSIEQ  573
+
+
+> TCONS_00068243 gene=XLOC_023730
+Length=9269
+
+ Score = 33.5 bits (75),  Expect = 2.6, Method: Compositional matrix adjust.
+ Identities = 14/34 (41%), Positives = 23/34 (68%), Gaps = 0/34 (0%)
+ Frame = -3
+
+Query  63    MPHPPYSEMICAAIAALNEPDGSSKMAISRYIER  96
+             + HP Y+ +I  AI++L +  GSS +AI + IE+
+Sbjct  6495  LQHPTYANLIHDAISSLKQRGGSSAIAIRKSIEQ  6394
+
+
+> TCONS_00068244 gene=XLOC_023730
+Length=10586
+
+ Score = 33.5 bits (75),  Expect = 2.6, Method: Compositional matrix adjust.
+ Identities = 14/34 (41%), Positives = 23/34 (68%), Gaps = 0/34 (0%)
+ Frame = -3
+
+Query  63    MPHPPYSEMICAAIAALNEPDGSSKMAISRYIER  96
+             + HP Y+ +I  AI++L +  GSS +AI + IE+
+Sbjct  6495  LQHPTYANLIHDAISSLKQRGGSSAIAIRKSIEQ  6394
+
+
+> TCONS_00030974 gene=XLOC_010850
+Length=2218
+
+ Score = 32.0 bits (71),  Expect = 7.5, Method: Compositional matrix adjust.
+ Identities = 12/30 (40%), Positives = 20/30 (67%), Gaps = 0/30 (0%)
+ Frame = +1
+
+Query  66    PPYSEMICAAIAALNEPDGSSKMAISRYIE  95
+             P Y +++  A+  L +P+GSS  +I+ YIE
+Sbjct  985   PRYDDIVVEAVLGLKDPNGSSNASIASYIE  1074
+
+
+> TCONS_00030971 gene=XLOC_010850
+Length=2868
+
+ Score = 32.0 bits (71),  Expect = 7.9, Method: Compositional matrix adjust.
+ Identities = 12/30 (40%), Positives = 20/30 (67%), Gaps = 0/30 (0%)
+ Frame = +3
+
+Query  66    PPYSEMICAAIAALNEPDGSSKMAISRYIE  95
+             P Y +++  A+  L +P+GSS  +I+ YIE
+Sbjct  1635  PRYDDIVVEAVLGLKDPNGSSNASIASYIE  1724
+
+
+> TCONS_00030970 gene=XLOC_010850
+Length=3678
+
+ Score = 32.0 bits (71),  Expect = 8.1, Method: Compositional matrix adjust.
+ Identities = 12/30 (40%), Positives = 20/30 (67%), Gaps = 0/30 (0%)
+ Frame = +3
+
+Query  66    PPYSEMICAAIAALNEPDGSSKMAISRYIE  95
+             P Y +++  A+  L +P+GSS  +I+ YIE
+Sbjct  2445  PRYDDIVVEAVLGLKDPNGSSNASIASYIE  2534
+
+
+> TCONS_00030972 gene=XLOC_010850
+Length=3161
+
+ Score = 31.6 bits (70),  Expect = 8.7, Method: Compositional matrix adjust.
+ Identities = 12/30 (40%), Positives = 20/30 (67%), Gaps = 0/30 (0%)
+ Frame = +1
+
+Query  66    PPYSEMICAAIAALNEPDGSSKMAISRYIE  95
+             P Y +++  A+  L +P+GSS  +I+ YIE
+Sbjct  1927  PRYDDIVVEAVLGLKDPNGSSNASIASYIE  2016
+
+
+
+Lambda      K        H        a         alpha
+   0.313    0.128    0.364    0.792     4.96 
+
+Gapped
+Lambda      K        H        a         alpha    sigma
+   0.267   0.0410    0.140     1.90     42.6     43.6 
+
+Effective search space used: 24934627542
+
+
+  Database: merged.fa
+    Posted date:  May 11, 2015  11:25 AM
+  Number of letters in database: 234,377,697
+  Number of sequences in database:  80,645
+
+
+
+Matrix: BLOSUM62
+Gap Penalties: Existence: 11, Extension: 1
+Neighboring words threshold: 13
+Window for multiple hits: 40

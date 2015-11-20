@@ -1,0 +1,327 @@
+TBLASTX 2.2.29+
+
+
+Reference: Stephen F. Altschul, Thomas L. Madden, Alejandro A.
+Schaffer, Jinghui Zhang, Zheng Zhang, Webb Miller, and David J.
+Lipman (1997), "Gapped BLAST and PSI-BLAST: a new generation of
+protein database search programs", Nucleic Acids Res. 25:3389-3402.
+
+
+
+Database: merged.fa
+           80,645 sequences; 234,377,697 total letters
+
+
+
+Query= Q1
+
+Length=1443
+                                                                      Score     E
+Sequences producing significant alignments:                          (Bits)  Value  N
+
+  TCONS_00058177 gene=XLOC_020170                                     44.3    0.003  1
+  TCONS_00030973 gene=XLOC_010850                                     37.0    0.45   1
+  TCONS_00030974 gene=XLOC_010850                                     34.8    2.2    1
+  TCONS_00030972 gene=XLOC_010850                                     34.8    2.2    1
+  TCONS_00030971 gene=XLOC_010850                                     34.8    2.2    1
+  TCONS_00030970 gene=XLOC_010850                                     34.8    2.2    1
+  TCONS_00067582 gene=XLOC_023520                                     33.9    4.1    1
+  TCONS_00068244 gene=XLOC_023730                                     33.9    4.1    1
+  TCONS_00068243 gene=XLOC_023730                                     33.9    4.1    1
+  TCONS_00039619 gene=XLOC_013832                                     33.6    4.9    1
+  TCONS_00063882 gene=XLOC_022209                                     33.1    6.7    1
+  TCONS_00063881 gene=XLOC_022209                                     33.1    6.7    1
+  TCONS_00063880 gene=XLOC_022209                                     33.1    6.7    1
+  TCONS_00063879 gene=XLOC_022209                                     33.1    6.7    1
+  TCONS_00063878 gene=XLOC_022209                                     33.1    6.7    1
+  TCONS_00063877 gene=XLOC_022209                                     33.1    6.7    1
+  TCONS_00060489 gene=XLOC_021076                                     33.1    6.7    1
+  TCONS_00060488 gene=XLOC_021076                                     33.1    6.7    1
+  TCONS_00060487 gene=XLOC_021076                                     33.1    6.7    1
+  TCONS_00060486 gene=XLOC_021076                                     33.1    6.7    1
+  TCONS_00060485 gene=XLOC_021076                                     33.1    6.7    1
+  TCONS_00060484 gene=XLOC_021076                                     33.1    6.7    1
+
+
+> TCONS_00058177 gene=XLOC_020170
+Length=2627
+
+ Score = 44.3 bits (91),  Expect = 0.003
+ Identities = 19/34 (56%), Positives = 24/34 (71%), Gaps = 0/34 (0%)
+ Frame = +1/+3
+
+Query  193  HPPYSEMICAAIAALNEPDGSSKMAISRYIERCY  294
+            HPPY EMI  AIA L E  GSS+ AI++++E  Y
+Sbjct  654  HPPYVEMIREAIATLKERTGSSQYAIAKHLEDKY  755
+
+
+> TCONS_00030973 gene=XLOC_010850
+Length=3095
+
+ Score = 37.0 bits (75),  Expect = 0.45
+ Identities = 13/31 (42%), Positives = 21/31 (68%), Gaps = 0/31 (0%)
+ Frame = +1/+1
+
+Query  196   PPYSEMICAAIAALNEPDGSSKMAISRYIER  288
+             P Y +++  A+  L +P+GSS  +I+ YIER
+Sbjct  1858  PRYDDIVVEAVLGLKDPNGSSNASIASYIER  1950
+
+
+> TCONS_00030974 gene=XLOC_010850
+Length=2218
+
+ Score = 34.8 bits (70),  Expect = 2.2
+ Identities = 12/30 (40%), Positives = 20/30 (67%), Gaps = 0/30 (0%)
+ Frame = +1/+1
+
+Query  196   PPYSEMICAAIAALNEPDGSSKMAISRYIE  285
+             P Y +++  A+  L +P+GSS  +I+ YIE
+Sbjct  985   PRYDDIVVEAVLGLKDPNGSSNASIASYIE  1074
+
+
+> TCONS_00030972 gene=XLOC_010850
+Length=3161
+
+ Score = 34.8 bits (70),  Expect = 2.2
+ Identities = 12/30 (40%), Positives = 20/30 (67%), Gaps = 0/30 (0%)
+ Frame = +1/+1
+
+Query  196   PPYSEMICAAIAALNEPDGSSKMAISRYIE  285
+             P Y +++  A+  L +P+GSS  +I+ YIE
+Sbjct  1927  PRYDDIVVEAVLGLKDPNGSSNASIASYIE  2016
+
+
+> TCONS_00030971 gene=XLOC_010850
+Length=2868
+
+ Score = 34.8 bits (70),  Expect = 2.2
+ Identities = 12/30 (40%), Positives = 20/30 (67%), Gaps = 0/30 (0%)
+ Frame = +1/+3
+
+Query  196   PPYSEMICAAIAALNEPDGSSKMAISRYIE  285
+             P Y +++  A+  L +P+GSS  +I+ YIE
+Sbjct  1635  PRYDDIVVEAVLGLKDPNGSSNASIASYIE  1724
+
+
+> TCONS_00030970 gene=XLOC_010850
+Length=3678
+
+ Score = 34.8 bits (70),  Expect = 2.2
+ Identities = 12/30 (40%), Positives = 20/30 (67%), Gaps = 0/30 (0%)
+ Frame = +1/+3
+
+Query  196   PPYSEMICAAIAALNEPDGSSKMAISRYIE  285
+             P Y +++  A+  L +P+GSS  +I+ YIE
+Sbjct  2445  PRYDDIVVEAVLGLKDPNGSSNASIASYIE  2534
+
+
+> TCONS_00067582 gene=XLOC_023520
+Length=1317
+
+ Score = 33.9 bits (68),  Expect = 4.1
+ Identities = 14/34 (41%), Positives = 23/34 (68%), Gaps = 0/34 (0%)
+ Frame = +1/+1
+
+Query  187  MPHPPYSEMICAAIAALNEPDGSSKMAISRYIER  288
+            + HP Y+ +I  AI++L +  GSS +AI + IE+
+Sbjct  472  LQHPTYANLIHDAISSLKQRGGSSAIAIRKSIEQ  573
+
+
+> TCONS_00068244 gene=XLOC_023730
+Length=10586
+
+ Score = 33.9 bits (68),  Expect = 4.1
+ Identities = 14/34 (41%), Positives = 23/34 (68%), Gaps = 0/34 (0%)
+ Frame = +1/-3
+
+Query  187   MPHPPYSEMICAAIAALNEPDGSSKMAISRYIER  288
+             + HP Y+ +I  AI++L +  GSS +AI + IE+
+Sbjct  6495  LQHPTYANLIHDAISSLKQRGGSSAIAIRKSIEQ  6394
+
+
+> TCONS_00068243 gene=XLOC_023730
+Length=9269
+
+ Score = 33.9 bits (68),  Expect = 4.1
+ Identities = 14/34 (41%), Positives = 23/34 (68%), Gaps = 0/34 (0%)
+ Frame = +1/-3
+
+Query  187   MPHPPYSEMICAAIAALNEPDGSSKMAISRYIER  288
+             + HP Y+ +I  AI++L +  GSS +AI + IE+
+Sbjct  6495  LQHPTYANLIHDAISSLKQRGGSSAIAIRKSIEQ  6394
+
+
+> TCONS_00039619 gene=XLOC_013832
+Length=2743
+
+ Score = 33.6 bits (67),  Expect = 4.9
+ Identities = 13/31 (42%), Positives = 17/31 (55%), Gaps = 0/31 (0%)
+ Frame = +3/-1
+
+Query  645  AASSITCSGSDSGYRVGEERTWSSKEERFCC  737
+            AAS   C G+DS Y  G ER W +++    C
+Sbjct  724  AASER*CQGTDSNYGAGGERFWRARDSAPAC  632
+
+
+> TCONS_00063882 gene=XLOC_022209
+Length=2007
+
+ Score = 33.1 bits (66),  Expect = 6.7
+ Identities = 14/28 (50%), Positives = 17/28 (61%), Gaps = 0/28 (0%)
+ Frame = +3/+1
+
+Query  666  SGSDSGYRVGEERTWSSKEERFCCSCYC  749
+            S SD G+R+GEE    S + R  CSC C
+Sbjct  346  SFSDRGWRIGEEIPGISPDLRL*CSCNC  429
+
+
+> TCONS_00063881 gene=XLOC_022209
+Length=2005
+
+ Score = 33.1 bits (66),  Expect = 6.7
+ Identities = 14/28 (50%), Positives = 17/28 (61%), Gaps = 0/28 (0%)
+ Frame = +3/+1
+
+Query  666  SGSDSGYRVGEERTWSSKEERFCCSCYC  749
+            S SD G+R+GEE    S + R  CSC C
+Sbjct  346  SFSDRGWRIGEEIPGISPDLRL*CSCNC  429
+
+
+> TCONS_00063880 gene=XLOC_022209
+Length=2097
+
+ Score = 33.1 bits (66),  Expect = 6.7
+ Identities = 14/28 (50%), Positives = 17/28 (61%), Gaps = 0/28 (0%)
+ Frame = +3/+1
+
+Query  666  SGSDSGYRVGEERTWSSKEERFCCSCYC  749
+            S SD G+R+GEE    S + R  CSC C
+Sbjct  343  SFSDRGWRIGEEIPGISPDLRL*CSCNC  426
+
+
+> TCONS_00063879 gene=XLOC_022209
+Length=2009
+
+ Score = 33.1 bits (66),  Expect = 6.7
+ Identities = 14/28 (50%), Positives = 17/28 (61%), Gaps = 0/28 (0%)
+ Frame = +3/+1
+
+Query  666  SGSDSGYRVGEERTWSSKEERFCCSCYC  749
+            S SD G+R+GEE    S + R  CSC C
+Sbjct  253  SFSDRGWRIGEEIPGISPDLRL*CSCNC  336
+
+
+> TCONS_00063878 gene=XLOC_022209
+Length=1886
+
+ Score = 33.1 bits (66),  Expect = 6.7
+ Identities = 14/28 (50%), Positives = 17/28 (61%), Gaps = 0/28 (0%)
+ Frame = +3/+2
+
+Query  666  SGSDSGYRVGEERTWSSKEERFCCSCYC  749
+            S SD G+R+GEE    S + R  CSC C
+Sbjct  224  SFSDRGWRIGEEIPGISPDLRL*CSCNC  307
+
+
+> TCONS_00063877 gene=XLOC_022209
+Length=1818
+
+ Score = 33.1 bits (66),  Expect = 6.7
+ Identities = 14/28 (50%), Positives = 17/28 (61%), Gaps = 0/28 (0%)
+ Frame = +3/+1
+
+Query  666  SGSDSGYRVGEERTWSSKEERFCCSCYC  749
+            S SD G+R+GEE    S + R  CSC C
+Sbjct  157  SFSDRGWRIGEEIPGISPDLRL*CSCNC  240
+
+
+> TCONS_00060489 gene=XLOC_021076
+Length=2460
+
+ Score = 33.1 bits (66),  Expect = 6.7
+ Identities = 13/31 (42%), Positives = 19/31 (61%), Gaps = 0/31 (0%)
+ Frame = +3/+2
+
+Query  666   SGSDSGYRVGEERTWSSKEERFCCSCYCTNR  758
+             + S+SG +  EER  +S   RF   CYC++R
+Sbjct  1136  ASSNSGRKAWEERQTASSRRRF*YLCYCSSR  1228
+
+
+> TCONS_00060488 gene=XLOC_021076
+Length=2505
+
+ Score = 33.1 bits (66),  Expect = 6.7
+ Identities = 13/31 (42%), Positives = 19/31 (61%), Gaps = 0/31 (0%)
+ Frame = +3/+3
+
+Query  666   SGSDSGYRVGEERTWSSKEERFCCSCYCTNR  758
+             + S+SG +  EER  +S   RF   CYC++R
+Sbjct  1179  ASSNSGRKAWEERQTASSRRRF*YLCYCSSR  1271
+
+
+> TCONS_00060487 gene=XLOC_021076
+Length=2406
+
+ Score = 33.1 bits (66),  Expect = 6.7
+ Identities = 13/31 (42%), Positives = 19/31 (61%), Gaps = 0/31 (0%)
+ Frame = +3/+2
+
+Query  666   SGSDSGYRVGEERTWSSKEERFCCSCYCTNR  758
+             + S+SG +  EER  +S   RF   CYC++R
+Sbjct  1082  ASSNSGRKAWEERQTASSRRRF*YLCYCSSR  1174
+
+
+> TCONS_00060486 gene=XLOC_021076
+Length=2385
+
+ Score = 33.1 bits (66),  Expect = 6.7
+ Identities = 13/31 (42%), Positives = 19/31 (61%), Gaps = 0/31 (0%)
+ Frame = +3/+2
+
+Query  666   SGSDSGYRVGEERTWSSKEERFCCSCYCTNR  758
+             + S+SG +  EER  +S   RF   CYC++R
+Sbjct  1061  ASSNSGRKAWEERQTASSRRRF*YLCYCSSR  1153
+
+
+> TCONS_00060485 gene=XLOC_021076
+Length=2385
+
+ Score = 33.1 bits (66),  Expect = 6.7
+ Identities = 13/31 (42%), Positives = 19/31 (61%), Gaps = 0/31 (0%)
+ Frame = +3/+2
+
+Query  666   SGSDSGYRVGEERTWSSKEERFCCSCYCTNR  758
+             + S+SG +  EER  +S   RF   CYC++R
+Sbjct  1061  ASSNSGRKAWEERQTASSRRRF*YLCYCSSR  1153
+
+
+> TCONS_00060484 gene=XLOC_021076
+Length=2385
+
+ Score = 33.1 bits (66),  Expect = 6.7
+ Identities = 13/31 (42%), Positives = 19/31 (61%), Gaps = 0/31 (0%)
+ Frame = +3/+1
+
+Query  666   SGSDSGYRVGEERTWSSKEERFCCSCYCTNR  758
+             + S+SG +  EER  +S   RF   CYC++R
+Sbjct  1057  ASSNSGRKAWEERQTASSRRRF*YLCYCSSR  1149
+
+
+
+Lambda      K        H
+   0.315    0.130    0.372 
+
+
+Effective search space used: 31716982011
+
+
+  Database: merged.fa
+    Posted date:  May 11, 2015  11:25 AM
+  Number of letters in database: 234,377,697
+  Number of sequences in database:  80,645
+
+
+
+Matrix: BLOSUM62
+Neighboring words threshold: 13
+Window for multiple hits: 40
