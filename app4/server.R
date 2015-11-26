@@ -2,6 +2,8 @@ library(shiny)
 library(DT)
 source("functions.R")
 hits=NULL
+out=NULL
+outname=NULL
 shinyServer(function(input, output) {
   
     output$Results <- DT::renderDataTable({
@@ -24,22 +26,13 @@ shinyServer(function(input, output) {
         progress$set(value = value, detail = detail)
       }
         data=(input$text)
-        #print(data)
-        #if (is.null(data)){
-         # return(NULL)
-        #}
         if (data!=""){
-            print("ok")
             con=file("temp.fa", open = "w")
             writeLines(c(">Q1",data),con=con)
             close(con)
-            print("oo")
-            print(input$radio)
             cmds <- cmdCreate("temp.fa","out.out",input$radio)
-            print(cmds)
             system(cmds)
             my_table=as.data.frame(system2("bash", "../script/blast/grepCmd.sh",stdout=TRUE))
-            print(my_table)
             my_table$link <- createLink(my_table[,1])
             ex = read.table("out.out")
             gene = map2gene(ex[,2])
@@ -55,12 +48,25 @@ shinyServer(function(input, output) {
         tabs = $(".tabbable .nav.nav-tabs li a");
         $(tabs[1]).click();})'))
     
-    output$seq <- renderPrint({
+    output$seq <- renderUI({
       sel = hits[as.numeric(input$Results_rows_selected[length(input$Results_rows_selected)])]
-      seq = mapTranscriptSeq(sel,'seq.fasta')
+      seq = mapTranscriptSeq(sel,'seq.fasta',input$num)[[1]]
+      gene = mapTranscriptSeq(sel,'seq.fasta',input$num)[[2]]
       ff = system(seq,intern = TRUE)
-      ff
+      headr = ff[1]
+      fasta = ff[-1]
+      outname <<- sub(">","",paste(headr = ff[1],gene,sep="_"))
+      out <<- c(paste(headr,gene,sep="-"),fasta)
+      HTML(c(out[1],paste(fasta,collapse = "<br>")))
       
     })
+    output$downloadFasta <- downloadHandler(
+      filename = function() { 
+        paste(outname,"fasta",sep=".")
+      },
+      content = function(file) {
+        write.table(out, file,quote = FALSE, row.names = FALSE, col.names = FALSE)
+      }
+    )
     
 })

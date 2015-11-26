@@ -26,7 +26,12 @@ map2gene <- function(id){
   g
 }
 
-mapTranscriptSeq <- function(id,outfile){
+mapTranscriptSeq <- function(id,outfile,extra){
+  #print(id)
+  gene= t2g[id,"gene"]
   g = t2g[id,c("scaffold","start","end")]
-  paste("/Library/samtools-0.1.19/samtools faidx ../data/blast/Marchantia_polymorpha.main_genome.scaffolds.fasta",paste(g[,1],paste(g[,2],g[,3],sep="-"),sep=":"))#,">",outfile) 
-}
+  g[,"start"] = g[,"start"]-extra
+  g[,"end"] = g[,"end"]+extra
+  comd = paste("/Library/samtools-0.1.19/samtools faidx ../data/blast/Marchantia_polymorpha.main_genome.scaffolds.fasta",paste(g[,1],paste(g[,2],g[,3],sep="-"),sep=":"))#,">",outfile) 
+  return(list(comd,gene))
+  }
