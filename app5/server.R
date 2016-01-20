@@ -1,7 +1,7 @@
 library(shiny)
 library(reshape2)
 
-outputDir <- "/Users/elin.axelsson/glans/app5/responses"
+outputDir <- "responses"
 
 saveData <- function(data) {
   data <- t(data)
