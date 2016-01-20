@@ -20,7 +20,7 @@ shinyUI(fluidPage(
   
   numericInput("num", label = ("Extra bp up- and down-stream"), value = 0,width="100%"),
   radioButtons("type",label = ("Gene or transcript"),
-               choices = list("transcript sequence"=1, "genomic sequence" = 2),
+               choices = list("transcript sequence (NOT implemeted yet)"=1, "genomic sequence" = 2),
                selected = 2)
   ),
   mainPanel(
