@@ -1,5 +1,5 @@
 library(shiny)
-#library(reshape2)
+library(reshape2)
 
 outputDir <- "/Users/elin.axelsson/glans/app5/responses"
 
