@@ -1,7 +1,8 @@
 library(shiny)
-library(reshape2)
+#library(reshape2)
 
 outputDir <- "/Users/elin.axelsson/glans/app5/responses"
+
 saveData <- function(data) {
   data <- t(data)
   # Create a unique file name
@@ -16,8 +17,8 @@ saveData <- function(data) {
 }
 removeData <-function(){
   tt= unlink(paste(outputDir,"tomo.csv",sep="/"))
-print(paste(outputDir,"tomo.csv",sep="/"))
-    print(tt)
+  print(paste(outputDir,"tomo.csv",sep="/"))
+  print(tt)
   }
 
 
@@ -25,6 +26,7 @@ loadData <- function() {
   # Read all the files into a list
   files <- list.files(outputDir, full.names = TRUE)
   data <- lapply(files, read.csv, stringsAsFactors = FALSE) 
+  print(data)
   # Concatenate all data together into one data.frame
   data <- do.call(rbind, data)
   data
@@ -106,12 +108,15 @@ shinyServer(function(input, output,session) {
   
   
   observe({
-    updateTextInput(session, "collection_txt", value = rowSelect() ,label = "Foo:" )
+    #updateTextInput(session, "collection_txt", value = rowSelect() ,label = "Foo:" )
     if(length(rowSelect())>0){
       keep<<- 1
     }
     if(length(rowSelect())>0){ 
-      mych<<- as.numeric(rowSelect())
+      nn = as.numeric(rowSelect())
+      mych<<-rownames(groupData())[nn]
+      #print(rownames(groupData())[mych])
+            #[as.numeric(rowSelect),1])
       saveData(mych)
     } 
     print(!is.null(keep))
@@ -127,11 +132,16 @@ shinyServer(function(input, output,session) {
   
   output$tot_data = renderDataTable({
     dt=groupData()
+    if (nrow(dt)==0){
+      return(NULL)
+    }
     dt[,1:23]
     selected<<-dt[,1:23]
     addCheckboxButtons <- paste0('<input type="checkbox" name="row', rownames(dt),'" value="', rownames(dt), '">',"")
     #Display table with checkbox buttons
-    prec = unique(unlist(mych))
+    precn = unique(unlist(mych))
+    prec = which(rownames(dt)%in%precn)
+    print(prec)
     addCheckboxButtons[prec] <- paste0('<input type="checkbox" name="row', rownames(dt)[prec],'" value="', rownames(dt)[prec], '"checked=1"', '">',"")
     cbind(Pick=addCheckboxButtons, dt,id=1:nrow(dt))
   },escape = FALSE, options = list(bSortClasses = TRUE, aLengthMenu = c(5, 25, 50), iDisplayLength = 25),
