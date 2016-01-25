@@ -31,6 +31,8 @@ shinyServer(function(input, output) {
             writeLines(c(">Q1",data),con=con)
             close(con)
             cmds <- cmdCreate("temp.fa","out.out",input$radio)
+            print(input$radio)
+            print(cmds)
             system(cmds)
             my_table=as.data.frame(system2("bash", "../script/blast/grepCmd.sh",stdout=TRUE))
             my_table$link <- createLink(my_table[,1])

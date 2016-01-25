@@ -8,7 +8,7 @@ cmdCreate <- function(infile, outfile,type){
                  outfile, sep = ""))
   }
   if(type=="2")
-    return(paste("tblastn -db ../data/blast/merged.fa -query ", infile, "-num_alignments 5 -outfmt 7",  " > ",
+    return(paste("tblastn -db ../data/blast/merged.fa -query ", infile, " -outfmt 7",  " > ",
                  outfile, sep = ""))
 }
 
