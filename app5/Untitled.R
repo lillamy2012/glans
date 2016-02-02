@@ -1,7 +1,7 @@
 library("DESeq2")
-genes= read.table("/Users/elin.axelsson/berger_group/user/elin.axelsson/analyses/cuffmerg_cuffquant_cuffnorm//Marchantia_csf2/analysis/genes.fpkm_table",row.names=1,header=T)
-samples = read.table("/Users/elin.axelsson/berger_group/user/elin.axelsson/analyses/cuffmerg_cuffquant_cuffnorm/Marchantia_csf2/analysis/samples.table",header=T,row.names=1)
-counts=read.table("/Users/elin.axelsson/berger_group/user/elin.axelsson/analyses/cuffmerg_cuffquant_cuffnorm/Marchantia_csf2/analysis/genes.count_table",row.names=1,header=T)
+genes= read.table("/Users/elin.axelsson/berger_group/user/elin.axelsson/analyses_to_change/cuffmerg_cuffquant_cuffnorm//Marchantia_csf2/analysis/genes.fpkm_table",row.names=1,header=T)
+samples = read.table("/Users/elin.axelsson/berger_group/user/elin.axelsson/analyses_to_change/cuffmerg_cuffquant_cuffnorm/Marchantia_csf2/analysis/samples.table",header=T,row.names=1)
+counts=read.table("/Users/elin.axelsson/berger_group/user/elin.axelsson/analyses_to_change/cuffmerg_cuffquant_cuffnorm/Marchantia_csf2/analysis/genes.count_table",row.names=1,header=T)
 ## rpkm to TPM 
 #tpm = apply(genes,2,function(x) y=10^6*x/(sum(x)))
 s_names = sapply(strsplit(samples[,"file"],"/"),"[[",10)
@@ -44,9 +44,12 @@ notinc = list(
   c("Intercept","condition20DAFSoftembryo"),
   c("Intercept","condition20DAF1mmembryo"),
   c("Intercept","conditionSpore"),
-  c("Intercept","condition20DAFSoftembryo")
+  c("Intercept","condition20DAFSoftembryo"),
+  c("Intercept","condition15DAFembryo"),
+  c("Intercept","condition10DAF")
 )
-ofInt = c("conditionMp_sperm","conditionYoung_male_rep","condition15DAFembryo","condition20DAF1mmembryo","condition20DAF1mmembryo","condition20DAFSoftembryo","condition20DAFSoftembryo","conditionSpore")
+ofInt = c("conditionMp_sperm","conditionYoung_male_rep","condition15DAFembryo","condition20DAF1mmembryo",
+          "condition20DAF1mmembryo","condition20DAFSoftembryo","condition20DAFSoftembryo","conditionSpore","condition10DAF","condition15DAFembryo")
 
 statsList = list()
 for(i in 1:length(ofInt)){
