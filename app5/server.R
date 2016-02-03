@@ -11,6 +11,7 @@ shinyServer(function(input, output,session) {
   coltoUse=NULL
   stList=NULL
   group=NULL
+  stats=NULL
   #tot=NULL
   
   createSubData <- reactive({ ## remove outlier samples
@@ -38,7 +39,8 @@ shinyServer(function(input, output,session) {
   makeGroupSet = function(){
     stIn = stList[[1]][which(stList[[2]][,"padj"]<input$padj),]
     groupL= groups(input$Set,input$Group,notinc,ofInt,stIn,input$minFC,input$minavFC)
-    group <<- groupL
+    group <<- groupL[[1]]
+    stats <<- groupL[[2]]
     }
   
   
@@ -46,7 +48,7 @@ shinyServer(function(input, output,session) {
     doStats()
     makeGroupSet()
     dt = rpkm[group,]
-    print(rownames(dt))
+    #print(rownames(dt))
     selected <<- dt
     if(nrow(dt)==0)
       return(NULL)
@@ -86,5 +88,32 @@ shinyServer(function(input, output,session) {
       write.csv(selected, file)
     }
   )
+  
+  output$selc = renderPlot({
+    makeGroupSet()
+    
+    
+    #dt=groupData()
+    #input$padj
+    #input$Group
+    #input$Set
+    
+    
+    #input$minavFC
+    #input$minFC
+    #a = which(dt$one==1 & dt$mdist1>input$minFC & dt$avdist1>input$minavFC)
+    #b = which(dt$two==1 & dt$mdist2>input$minFC & dt$avdist2>input$minavFC)
+    #stat12 = length(intersect(a,b))
+    #stat1o2 = length(union(a,b))
+    #stat1 = length(setdiff(a,b))
+    #stat2 = length(setdiff(b,a))
+    #stats=c(stat1o2,stat12,stat1,stat2)
+    
+    bp=barplot(stats,col=c("lightblue","darkblue","lightyellow","lightgreen"),names.arg=c("at least one","in both","first only","second only"),ylab="nr genes")
+    text(x=bp,y=max(stats)/2,labels =stats,cex=2)
+  })
+  
+  
+  
   
 })
