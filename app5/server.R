@@ -45,6 +45,7 @@ shinyServer(function(input, output,session) {
   stList=NULL
   group=NULL
   stats=NULL
+  summlist=NULL
   
   ## remove outlier samples
   createSubData <- reactive({
@@ -85,15 +86,20 @@ shinyServer(function(input, output,session) {
   })
     
   ## use the group and set settings to get genes in group+set (plus numbers for barplot)
-  makeGroupSet = reactive({
-    print("1")
+  calcGroupStat = reactive({
+    print("once")
     input$goButton 
     stIn = stList[[1]][which(stList[[2]][,"padj"]<input$padj),]
-    groupL= groups(input$Set,input$Group,notinc,ofInt,stIn,input$minFC,input$minavFC)
+    summList <<- calcStatsAll(notinc,ofInt,stIn)
+    print("once2")
+  })
+  
+  CalcwitGr = reactive({
+    print("per comb")
+    groupL= groupsIm(input$Set,input$Group,input$minFC,input$minavFC,summList)
     group <<- groupL[[1]]
     stats <<- groupL[[2]]
-    print("2")
-    })
+  })
   
   rowSelect <- reactive({
     paste(sort(unique(input[["rows"]])),sep=',')
@@ -124,7 +130,9 @@ shinyServer(function(input, output,session) {
   
   output$matplot = renderPlot({
     doStats()
-    makeGroupSet()
+    calcGroupStat()
+    CalcwitGr()
+    #makeGroupSet()
     dt = rpkm[group,]
     selected <<- dt
     if(nrow(selected)==0)
@@ -154,7 +162,9 @@ shinyServer(function(input, output,session) {
   output$tot_data = renderDataTable({
     createSubData()
     doStats()
-    makeGroupSet()
+    calcGroupStat()
+    CalcwitGr()
+    #makeGroupSet()
     if (nrow(selected)==0){
       return(NULL)
     }
@@ -188,7 +198,9 @@ return $(this).text();
   )
   
   output$selc = renderPlot({
-    makeGroupSet()
+    #makeGroupSet()
+    calcGroupStat()
+    CalcwitGr()
     bp=barplot(stats,col=c("lightblue","darkblue","lightyellow","lightgreen"),names.arg=c("at least one","in both","first only","second only"),ylab="nr genes")
     text(x=bp,y=max(stats)/2,labels =stats,cex=2)
   })
