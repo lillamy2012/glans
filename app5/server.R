@@ -1,6 +1,7 @@
 library(shiny)
 library(reshape2)
 source("functions.R")
+#load("defaultStat.Rdata")
 
 outputDir <- "/Users/elin.axelsson/glans/app5/responses"
 
@@ -30,7 +31,7 @@ loadData <- function() {
   data
 }
 mych = loadData()
-print(mych)
+
 ########################
 
 shinyServer(function(input, output,session) {
@@ -64,17 +65,35 @@ shinyServer(function(input, output,session) {
   
   ## run DESeq2 to get statistics
   doStats = reactive({
+    print("start")
+    outl = isolate(input$outlier)
+    ma = sapply(outls,function(x) identical(sort(x),sort(outl)))
     createSubData()
-    stList <<- runStats(ctouse,coltoUse)
+    input$goButton 
+    if(length(outl)==0){
+        print("using preCal")
+        stList <<- ds[[1]]
+    } else if(sum(ma)==1){
+        print("using preCal")
+        a = which(ma==TRUE)
+        print(a)
+        stList <<- ds[[a]]
+      } else{
+      stList <<- runStats(ctouse,coltoUse)
+      }
+    print("end")
   })
     
   ## use the group and set settings to get genes in group+set (plus numbers for barplot)
-  makeGroupSet = function(){
+  makeGroupSet = reactive({
+    print("1")
+    input$goButton 
     stIn = stList[[1]][which(stList[[2]][,"padj"]<input$padj),]
     groupL= groups(input$Set,input$Group,notinc,ofInt,stIn,input$minFC,input$minavFC)
     group <<- groupL[[1]]
     stats <<- groupL[[2]]
-    }
+    print("2")
+    })
   
   rowSelect <- reactive({
     paste(sort(unique(input[["rows"]])),sep=',')
@@ -133,6 +152,7 @@ shinyServer(function(input, output,session) {
   })
   
   output$tot_data = renderDataTable({
+    createSubData()
     doStats()
     makeGroupSet()
     if (nrow(selected)==0){
