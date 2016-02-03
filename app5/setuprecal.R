@@ -95,20 +95,26 @@ prcal = list()
 i=0
 for( outl in sets){
   i=i+1
+  print(i)
   if (length(outl)>0){
+    print("exclude")
     torm = colnames(counts)%in%outl   
     use_cols = cols[!torm,,drop=FALSE]
     use_counts = makeDataSet(counts,outl)
     use_genes = makeDataSet(genes,outl)
     use_counts = filterData(use_genes,use_counts,1)
   } else {
+    print("default")
     use_counts = filterData(genes,counts,1)
     use_cols = cols
     use_genes = genes
   }
+  print("runStats")
   r1 = runStats(use_counts,use_cols)
   stIn = r1[[1]][which(r1[[2]][,"padj"]<0.1),]
+  print("calALL")
   cal1 = calcStatsAll(notinc,ofInt,stIn)
+  print("add to list")
   prcal[[i]] = list(r1,cal1,outl)
 }
-#save(prcal,file="PreCal.Rdata")
+save(prcal,file="PreCal.Rdata")

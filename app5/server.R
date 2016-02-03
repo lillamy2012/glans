@@ -73,6 +73,7 @@ shinyServer(function(input, output,session) {
     input$goButton 
     if(length(outl)==0){
         print("using preCal")
+        print("1")
         stList <<- ds[[1]]
     } else if(sum(ma)==1){
         print("using preCal")
@@ -109,6 +110,7 @@ shinyServer(function(input, output,session) {
   
   CalcwitGr = reactive({
     print("per comb")
+    input$goButton 
     groupL= groupsIm(input$Set,input$Group,input$minFC,input$minavFC,summList)
     group <<- groupL[[1]]
     stats <<- groupL[[2]]
