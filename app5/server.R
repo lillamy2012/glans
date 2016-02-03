@@ -89,9 +89,22 @@ shinyServer(function(input, output,session) {
   calcGroupStat = reactive({
     print("once")
     input$goButton 
-    stIn = stList[[1]][which(stList[[2]][,"padj"]<input$padj),]
-    summList <<- calcStatsAll(notinc,ofInt,stIn)
-    print("once2")
+    outl = isolate(input$outlier)
+    ma = sapply(outls,function(x) identical(sort(x),sort(outl)))
+    
+    if(length(outl)==0){
+      print("using preCal")
+      summList <<- cl[[1]]
+    } else if(sum(ma)==1){
+      print("using preCal")
+      a = which(ma==TRUE)
+      print(a)
+      summList <<- cl[[a]]
+    } else{
+      stIn = stList[[1]][which(stList[[2]][,"padj"]<input$padj),]
+      summList <<- calcStatsAll(notinc,ofInt,stIn)
+    }
+      print("once2")
   })
   
   CalcwitGr = reactive({
