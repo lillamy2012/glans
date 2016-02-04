@@ -15,6 +15,7 @@ cols = data.frame(condition=c("10DAF","10DAF","15DAFembryo","15DAFembryo","20DAF
                               "Male_thalli","Male_thalli","Mp_female","Mp_thalli","Mp_sperm","Mp_sperm","Mp_sperm","Mp_sperm","Spore","Spore","Young_male_rep","Young_male_rep"))
 
 
+save(genes,counts,file="geneAndcount.Rdata")
 o_counts=counts
 o_genes = genes
 o_cols = cols
