@@ -1,3 +1,6 @@
+detach("package:shiny", unload=TRUE)
+unloadNamespace("httpuv")
+unloadNamespace("Rcpp")
 library(DESeq2)
 library(reshape2)
 library(shiny)
