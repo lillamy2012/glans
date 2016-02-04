@@ -1,9 +1,10 @@
-library(shiny)
+library(DESeq2)
 library(reshape2)
+library(shiny)
 source("functions.R")
 #load("defaultStat.Rdata")
 
-outputDir <- "/Users/elin.axelsson/glans/app5/responses"
+outputDir <- "responses"
 
 ### for the checkbox
 saveData <- function(data) {

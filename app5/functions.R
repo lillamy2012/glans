@@ -1,5 +1,5 @@
-library("DESeq2")
-
+#library("DESeq2")
+print("ok")
 #genes= read.table("/Users/elin.axelsson/berger_group/user/elin.axelsson/analyses_to_change/cuffmerg_cuffquant_cuffnorm//Marchantia_csf2/analysis/genes.fpkm_table",row.names=1,header=T)
 #samples = read.table("/Users/elin.axelsson/berger_group/user/elin.axelsson/analyses_to_change/cuffmerg_cuffquant_cuffnorm/Marchantia_csf2/analysis/samples.table",header=T,row.names=1)
 #counts=read.table("/Users/elin.axelsson/berger_group/user/elin.axelsson/analyses_to_change/cuffmerg_cuffquant_cuffnorm/Marchantia_csf2/analysis/genes.count_table",row.names=1,header=T)

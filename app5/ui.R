@@ -1,3 +1,4 @@
+library(DESeq2)
 library(shiny)
 
 shinyUI(fluidPage(
