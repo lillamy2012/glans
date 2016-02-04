@@ -139,7 +139,8 @@ shinyServer(function(input, output,session) {
     } 
     if(length(rowSelect())==0 & !is.null(keep)){ # remove last 
       mych<<- NULL
-      removeData()
+      saveData("")
+      #removeData()
     } 
     if(length(mych)>0){
       keep<<- 1
