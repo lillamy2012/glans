@@ -1,6 +1,6 @@
-detach("package:shiny", unload=TRUE)
-unloadNamespace("httpuv")
-unloadNamespace("Rcpp")
+#detach("package:shiny", unload=TRUE)
+#unloadNamespace("httpuv")
+#unloadNamespace("Rcpp")
 library(DESeq2)
 library(reshape2)
 library(shiny)
@@ -39,6 +39,8 @@ mych = loadData()
 ########################
 
 shinyServer(function(input, output,session) {
+  
+  print("ok")
  #set variable to NULL 
   selected=NULL
   use=NULL
