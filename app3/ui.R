@@ -50,7 +50,13 @@ shinyUI(fluidPage(
         tabPanel("Summary", dataTableOutput("summary"),
                  downloadButton('downloadSummary', 'Download full list')),
         
-        tabPanel("", plotOutput("my_prot1",height="600px"),dataTableOutput("info1"),
+        tabPanel("", plotOutput("my_prot1",height="600px"),
+                 checkboxInput('returnpdf', 'output pdf?', FALSE),
+                 conditionalPanel(
+                   condition = "input.returnpdf == true",
+                 downloadButton('downloadData0', 'Download figure')
+                 ),
+                 dataTableOutput("info1"),
                  hr(),hr(),dataTableOutput("mod1"),hr(),
                  downloadButton('downloadData1', 'Download full list'),
                  dataTableOutput("mod2"),hr(),

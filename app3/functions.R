@@ -2,6 +2,7 @@ library(DT)
 library(shiny)
 library(dplyr)
 library("Hmisc")
+library(RColorBrewer)
 ##########################################
 ## functions for renaming and labeling 
 ##########################################
@@ -12,17 +13,19 @@ identifySumo = function(data){
   data
 }
 
+colPal = brewer.pal(8,"Dark2")[1:7]
+colRange = brewer.pal(11,"RdBu")[1:3]
 colorList = list(
-  "no mod." = "lightgrey",
+  "no mod." = "grey85",
   "Ac" = "aquamarine",         
-  "UBi" = "red",
-  "Trimethyl" = "mistyrose",   
-  "Dimethyl" = "pink",   
-  "Meth" = "yellow",       
-  "Ph" = "chocolate",
-  "Cr" = "blue",
-  "Ci" = "green",
-  "Su" = "burlywood"
+  "UBi" = "darkorange" ,
+  "Trimethyl" = colRange[3],   
+  "Dimethyl" = colRange[1],   
+  "Meth" = "pink",       
+  "Ph" = "navy",
+  "Cr" = "darkgreen",
+  "Ci" = "purple",
+  "Su" = "yellow"
 )
 
 convert <-function(indata,table=tab){
@@ -144,7 +147,10 @@ ProteinPlotMat <- function(fasta,indind){ ### fasta is the sequence of protein i
   return(list(totmat,by_character))
 }
 
-ProteinPlot <- function(totmat,by_character,...){
+ProteinPlot <- function(totmat,by_character,returnpdf=FALSE,...){
+  if(returnpdf){
+    pdf("plot.pdf")
+  }
   if(sum(totmat)==0){
     re = plot(1:100)
     return(re)
@@ -173,6 +179,10 @@ ProteinPlot <- function(totmat,by_character,...){
     mtext(side=1,at = bp,num,cex=0.6,line=1,las=2)
     }
   legend("topright",legend=names(colsTot),fill=colsTot)
+  if(returnpdf){
+    dev.off()
+  }
+  #dev.copy2pdf(..., out.type = "pdf")
   return(totmat)
 }
 
