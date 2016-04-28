@@ -54,6 +54,7 @@ shinyUI(fluidPage(
                  checkboxInput('returnpdf', 'output pdf?', FALSE),
                  conditionalPanel(
                    condition = "input.returnpdf == true",
+                   sliderInput('size', 'width', 6, 25, 15),
                  downloadButton('downloadData0', 'Download figure')
                  ),
                  dataTableOutput("info1"),

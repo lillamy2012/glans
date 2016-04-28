@@ -148,9 +148,9 @@ ProteinPlotMat <- function(fasta,indind){ ### fasta is the sequence of protein i
   return(list(totmat,by_character))
 }
 
-ProteinPlot <- function(totmat,by_character,returnpdf=FALSE,...){
-  if(returnpdf){
-    pdf("plot.pdf",width=12)
+ProteinPlot <- function(totmat,by_character,returnpdf=FALSE,width=NULL,type=1,...){
+  if(returnpdf & type%in%c(1,2)){ ## pdf with one or two plots
+    pdf("plot.pdf",width=width)
   }
   if(sum(totmat)==0){
     re = plot(1:100)
@@ -184,9 +184,8 @@ ProteinPlot <- function(totmat,by_character,returnpdf=FALSE,...){
   INO=(intersect(names(fixOrd),names(colsTot)))
   EX = setdiff(names(colsTot),names(fixOrd))
   ord = c(INO,EX)
-  #print(names(colsTot)[order(names(colsTot)%in%fixOrd,decreasing = T)])
   legend("topright",legend=ord,fill=colsTot[ord])
-  if(returnpdf){
+  if(returnpdf & type%in%c(1,3)){
     dev.off()
   }
   return(totmat)
