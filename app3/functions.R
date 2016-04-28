@@ -13,17 +13,17 @@ identifySumo = function(data){
   data
 }
 
-colPal = brewer.pal(8,"Dark2")[1:7]
-colRange = brewer.pal(11,"RdBu")[1:3]
+
+colRange = brewer.pal(9,"Reds")[c(4,6,8)]
 colorList = list(
   "no mod." = "grey85",
   "Ac" = "aquamarine",         
-  "UBi" = "darkorange" ,
+  "UBi" = "olivedrab" ,
   "Trimethyl" = colRange[3],   
-  "Dimethyl" = colRange[1],   
-  "Meth" = "pink",       
+  "Dimethyl" = colRange[2],   
+  "Meth" = colRange[1],       
   "Ph" = "navy",
-  "Cr" = "darkgreen",
+  "Cr" = "orange",
   "Ci" = "purple",
   "Su" = "yellow"
 )
@@ -51,6 +51,7 @@ tab=list(
   "Phospho"= "Ph",    
   "PropMeth"="Meth",   
   "Methylthio"="",
+  "Meththio"="",
   "Crotonylation"="Cr",
   "Deamidated" = "Ci",
   "sumo" = "Su"
@@ -149,16 +150,17 @@ ProteinPlotMat <- function(fasta,indind){ ### fasta is the sequence of protein i
 
 ProteinPlot <- function(totmat,by_character,returnpdf=FALSE,...){
   if(returnpdf){
-    pdf("plot.pdf")
+    pdf("plot.pdf",width=12)
   }
   if(sum(totmat)==0){
     re = plot(1:100)
     return(re)
   }
   #print(dim(totmat))
-  cols =c("darkblue","darkred","pink","darkorchid","orange","red","blue","green","mistyrose","lightblue","lightgrey")
+  #cols =c("darkblue","darkred","pink","darkorchid","orange","red","blue","green","mistyrose","lightblue","lightgrey") # should be colors not used before
+  cols =c("#A6CEE3","#CAB2D6","#B15928","darkgrey","black")# brewer.pal(12,"Paired")[-c(2,3,4,5,6,7,8)]
   cols2= c(unlist(colorList[colnames(totmat)]))
-  extra2 = setdiff(colnames(totmat),names(colorList))
+  extra2 = setdiff(colnames(totmat),names(colorList)) # more categories than predefined with colors
   chars = rep("",nrow(totmat))
   if(length(extra2)>0){
     extra = setdiff(cols,cols2)
@@ -177,12 +179,16 @@ ProteinPlot <- function(totmat,by_character,returnpdf=FALSE,...){
     num[!num%in%isnot]=""
     num = as.numeric(num)-1
     mtext(side=1,at = bp,num,cex=0.6,line=1,las=2)
-    }
-  legend("topright",legend=names(colsTot),fill=colsTot)
+  }
+  fixOrd = list("no mod."=1,"Meth"=2,"Dimethyl"=3,"Trimethyl"=4)
+  INO=(intersect(names(fixOrd),names(colsTot)))
+  EX = setdiff(names(colsTot),names(fixOrd))
+  ord = c(INO,EX)
+  #print(names(colsTot)[order(names(colsTot)%in%fixOrd,decreasing = T)])
+  legend("topright",legend=ord,fill=colsTot[ord])
   if(returnpdf){
     dev.off()
   }
-  #dev.copy2pdf(..., out.type = "pdf")
   return(totmat)
 }
 
