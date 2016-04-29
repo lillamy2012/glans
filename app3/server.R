@@ -298,11 +298,7 @@ shinyServer(function(input, output) {
       paste(paste(outname,paste("a",input$filter,"u",input$checkbox,"n",input$norm,"g",!input$grouping,input$group1,sep="_"),sep="_"),'.pdf', sep='')
     },
     content = function(file) {
-     # if(!is.null(input$group1)){
       file.copy("plot.pdf", file)
-    #  } else {
-     # file.copy("tmp.pdf", file)
-      #}
     }
   )
   
