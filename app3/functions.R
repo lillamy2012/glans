@@ -169,9 +169,10 @@ ProteinPlot <- function(totmat,by_character,returnpdf=FALSE,width=NULL,type=1,..
   } else 
     colsTot=cols2
   if(ncol(totmat)==1)
-    bp = barplot(t(totmat),col=colsTot,border = NA,names.arg=rep("",nrow(totmat)),...)
+    bp = barplot(t(totmat),col=colsTot,border = NA,names.arg=rep("",nrow(totmat)),xaxs="i",...)
   else{
-    bp = barplot(t(totmat[,c(names(colsTot)[c(2:length(colsTot),1)])]),col=colsTot[c(2:length(colsTot),1)],border = NA,names.arg=rep("",nrow(totmat)),...)
+    bp = barplot(t(totmat[,c(names(colsTot)[c(2:length(colsTot),1)])]),col=colsTot[c(2:length(colsTot),1)],border = NA,names.arg=rep("",nrow(totmat)),xaxs="i",...)
+    save(totmat,file="temp.Rdata")
     isnot = which(rowSums(totmat[,2:ncol(totmat),drop=F])>0)
     chars[isnot]=by_character[isnot]
     num=1:(length(by_character))
