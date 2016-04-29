@@ -5,6 +5,7 @@ library(dplyr)
 library(DT)
 source("functions.R")
 library(stringr)
+library(xlsx)
 
 ###################################
 ss=NULL
@@ -304,28 +305,31 @@ shinyServer(function(input, output) {
   
   output$downloadData1 <- downloadHandler(
     filename = function() { 
-      paste(paste(outname,paste("a",input$filter,"u",input$checkbox,"n",input$norm,"g",!input$grouping,input$group1,sep="_"),sep="_"),'.csv', sep='') 
+      paste(paste(outname,paste("a",input$filter,"u",input$checkbox,"n",input$norm,"g",!input$grouping,input$group1,sep="_"),sep="_"),'.xlsx', sep='') 
     },
     content = function(file) {
-      write.csv(out, file)
+      #write.csv(out, file)
+      write.xlsx(out, file, sheetName="Sheet1")
     }
   )
   
   output$downloadData2 <- downloadHandler(
     filename = function() { 
-      paste(paste(outname,paste("a",input$filter,"u",input$checkbox,"n",input$norm,"g",!input$grouping,input$group2,sep="_"),sep="_"),'.csv', sep='') 
+      paste(paste(outname,paste("a",input$filter,"u",input$checkbox,"n",input$norm,"g",!input$grouping,input$group2,sep="_"),sep="_"),'.xlsx', sep='') 
     },
     content = function(file) {
-      write.csv(out2, file)
+      #write.csv(out2, file)
+      write.xlsx(out2, file, sheetName="Sheet1")
     }
   )
   
  output$downloadSummary <- downloadHandler(
    filename = function() { 
-     paste(paste("a",input$filter,"u",input$checkbox,"n",input$norm,"g",!input$grouping,input$group1,input$group2,sep="_"),'.csv',sep="")
+     paste(paste("a",input$filter,"u",input$checkbox,"n",input$norm,"g",!input$grouping,input$group1,input$group2,sep="_"),'.xlsx',sep="")
    },
    content = function(file) {
-     write.csv(summ, file)
+     #write.csv(summ, file)
+     write.xlsx(summ, file, sheetName="Sheet1")
    }
  )
   
