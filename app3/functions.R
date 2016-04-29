@@ -148,9 +148,9 @@ ProteinPlotMat <- function(fasta,indind){ ### fasta is the sequence of protein i
   return(list(totmat,by_character))
 }
 
-ProteinPlot <- function(totmat,by_character,returnpdf=FALSE,width=NULL,type=1,...){
+ProteinPlot <- function(totmat,by_character,returnpdf=FALSE,width=NULL,height=NULL,type=1,...){
   if(returnpdf & type%in%c(1,2)){ ## pdf with one or two plots
-    pdf("plot.pdf",width=width)
+    pdf("plot.pdf",width=width,height=height)
   }
   if(sum(totmat)==0){
     re = plot(1:100)
@@ -172,7 +172,6 @@ ProteinPlot <- function(totmat,by_character,returnpdf=FALSE,width=NULL,type=1,..
     bp = barplot(t(totmat),col=colsTot,border = NA,names.arg=rep("",nrow(totmat)),xaxs="i",...)
   else{
     bp = barplot(t(totmat[,c(names(colsTot)[c(2:length(colsTot),1)])]),col=colsTot[c(2:length(colsTot),1)],border = NA,names.arg=rep("",nrow(totmat)),xaxs="i",...)
-    save(totmat,file="temp.Rdata")
     isnot = which(rowSums(totmat[,2:ncol(totmat),drop=F])>0)
     chars[isnot]=by_character[isnot]
     num=1:(length(by_character))

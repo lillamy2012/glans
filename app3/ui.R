@@ -51,12 +51,20 @@ shinyUI(fluidPage(
                  downloadButton('downloadSummary', 'Download full list')),
         
         tabPanel("", plotOutput("my_prot1",height="600px"),
-                 checkboxInput('returnpdf', 'output pdf?', FALSE),
+                 checkboxInput('returnpdf', 'output pdf', FALSE),
                  conditionalPanel(
                    condition = "input.returnpdf == true",
-                   sliderInput('size', 'width', 6, 25, 15),
-                 downloadButton('downloadData0', 'Download figure')
-                 ),
+                   fluidRow(
+                     column(3,
+                            downloadButton('downloadData0', 'Download figure')
+                     ),
+                   column(4,
+                          wellPanel(
+                          sliderInput('height', 'Select pdf height', 3, 10, 7))),
+                   column(4,
+                          wellPanel(
+                          sliderInput('size', 'Select pdf width', 6, 25, 15))
+                 ))),
                  dataTableOutput("info1"),
                  hr(),hr(),dataTableOutput("mod1"),hr(),
                  downloadButton('downloadData1', 'Download full list'),

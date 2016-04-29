@@ -231,8 +231,8 @@ shinyServer(function(input, output) {
       info <<- info_t
       par(mfrow=c(2,1))
       ys = max(max(mm2[[1]]/tot[2]),max(mm1[[1]]/tot[1]))
-      ProteinPlot(mm1[[1]]/tot[1],mm1[[2]],ylim=c(0,ys),input$returnpdf,input$size,type=2)
-      ProteinPlot(mm2[[1]]/tot[2],mm2[[2]],ylim=c(0,ys),input$returnpdf,input$size,type=3)
+      ProteinPlot(mm1[[1]]/tot[1],mm1[[2]],ylim=c(0,ys),input$returnpdf,input$size,input$height,type=2)
+      ProteinPlot(mm2[[1]]/tot[2],mm2[[2]],ylim=c(0,ys),input$returnpdf,input$size,input$height,type=3)
         
     }
     if(grp==0) {
@@ -242,7 +242,7 @@ shinyServer(function(input, output) {
         mm = ProteinPlotMat(dd[as.numeric(sel),"Sequence"],indind)
         info <<- summaryFunction(mm[[1]],indind,dd[(sel),"Accession"])
         res <<- modSummary(mm[[1]])
-        ProteinPlot(mm[[1]]/tot,mm[[2]],input$returnpdf,input$size,type=1)
+        ProteinPlot(mm[[1]]/tot,mm[[2]],input$returnpdf,input$size,input$height,type=1)
         
       }
     }
